@@ -624,7 +624,7 @@ export const hostApi = createApi({
             invalidatesTags: (result, error, id) => [{ type: "Event", id }],
         }),
         getJobs: builder.query({
-            query: () => "carrer/jobs",
+            query: (country) => country ? `carrer/jobs?location=${encodeURIComponent(country)}` : "carrer/jobs",
             providesTags: ["Job"],
             transformResponse: (response) => {
                 const jobs = response?.jobs || response?.data || response || [];

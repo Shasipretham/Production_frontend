@@ -6,13 +6,13 @@ import { ContactForm } from "@/components/contact/ContactForm"
 
 export default function ContactPage() {
     return (
-        <main className="min-h-screen bg-[#00152d] text-[#f7eed7] selection:bg-accent/30">
+        <main className="min-h-screen bg-[#00142E] text-[#D1CBB7] selection:bg-[#CB2A25]/30">
             <Navbar />
 
             {/* Ambient Background Effects */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
+                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#CB2A25]/5 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#D1CBB7]/5 rounded-full blur-[100px]" />
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 py-20 sm:py-24 md:py-32 relative z-10">

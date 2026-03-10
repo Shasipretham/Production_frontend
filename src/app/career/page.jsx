@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePagination } from "@/hooks/usePagination"
 import { Pagination } from "@/components/ui/Pagination"
+import { useCountry } from "@/context/CountryContext"
 
 export default function CareerPage() {
     const jobListRef = React.useRef(null)
@@ -30,7 +31,8 @@ export default function CareerPage() {
     const [hoveredJobId, setHoveredJobId] = useState(null)
     const [activeTab, setActiveTab] = useState("all")
 
-    const { data: jobs = [], isLoading } = useGetJobsQuery()
+    const { activeCountry } = useCountry()
+    const { data: jobs = [], isLoading } = useGetJobsQuery(activeCountry?.name)
 
     const handleViewDetails = (job) => {
         setSelectedJob(job)
@@ -140,16 +142,16 @@ export default function CareerPage() {
     ]
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 font-sans">
+        <main className="min-h-screen bg-gradient-to-br from-gray-50 via-[#D1CBB7]/10 to-gray-50 font-sans">
             <Navbar />
 
             {/* Enhanced Hero Section with Logo Colors */}
-            <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 pt-24 sm:pt-28 pb-12 sm:pb-16 md:pb-20 px-4 relative overflow-hidden">
-                {/* Animated background elements with logo colors */}
+            <div className="bg-gradient-to-br from-[#00142E] via-[#0A1C30] to-[#02152B] pt-24 sm:pt-28 pb-12 sm:pb-16 md:pb-20 px-4 relative overflow-hidden">
+                {/* Animated background elements with brand colors */}
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-pulse animation-delay-2000"></div>
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-700 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#CB2A25] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#D1CBB7] rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-pulse animation-delay-2000"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#0A1C30] rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
                 </div>
 
                 <div className="container mx-auto max-w-6xl relative z-10">
@@ -160,7 +162,7 @@ export default function CareerPage() {
                         className="text-center mb-8 sm:mb-10 md:mb-12"
                     >
                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-                            Find Your Dream Job at <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-500">NextKinLife LLC</span>
+                            Find Your Dream Job at <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#CB2A25] to-[#D1CBB7] whitespace-nowrap">NextKinLife LLC</span>
                         </h1>
                         <p className="text-white/90 max-w-3xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
                             Join our team of innovators and change-makers. Discover opportunities that align with your passion and skills in a collaborative, inclusive environment.
@@ -193,7 +195,7 @@ export default function CareerPage() {
                                 className="w-full h-12 pl-12 pr-4 rounded-xl outline-none bg-white/90 text-gray-900 placeholder:text-gray-500 focus:ring-4 focus:ring-white/30 transition-all text-base"
                             />
                         </div>
-                        <Button className="h-12 px-8 bg-gradient-to-r from-red-500 to-yellow-500 hover:from-red-600 hover:to-yellow-600 text-white rounded-xl font-bold text-base shadow-xl transition-all hover:shadow-2xl flex items-center gap-2">
+                        <Button className="h-12 px-8 bg-[#CB2A25] hover:bg-[#a82220] text-white rounded-xl font-bold text-base shadow-xl transition-all hover:shadow-2xl flex items-center gap-2">
                             Search Jobs
                             <ArrowRight className="h-4 w-4" />
                         </Button>
@@ -232,7 +234,7 @@ export default function CareerPage() {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                                        ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
+                                        ? "bg-[#00142E] text-white shadow-lg"
                                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                                         }`}
                                 >
@@ -272,14 +274,14 @@ export default function CareerPage() {
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8"
                     >
                         {[
-                            { icon: TrendingUp, title: "Career Growth", desc: "Clear advancement paths and mentorship programs", color: "from-blue-500 to-blue-700" },
-                            { icon: Users, title: "Great Team", desc: "Collaborative environment with talented professionals", color: "from-red-500 to-red-700" },
-                            { icon: Coffee, title: "Work-Life Balance", desc: "Flexible schedules and remote work options", color: "from-yellow-500 to-yellow-600" },
-                            { icon: Award, title: "Recognition", desc: "Your achievements get noticed and rewarded", color: "from-blue-600 to-blue-800" },
-                            { icon: Shield, title: "Health & Wellness", desc: "Comprehensive health benefits and wellness programs", color: "from-red-600 to-red-800" },
-                            { icon: Zap, title: "Innovation", desc: "Work on cutting-edge projects with latest tech", color: "from-yellow-600 to-yellow-700" },
-                            { icon: Target, title: "Impact", desc: "Make a real difference in millions of lives", color: "from-blue-700 to-blue-900" },
-                            { icon: Wifi, title: "Modern Office", desc: "State-of-the-art facilities and equipment", color: "from-red-700 to-red-900" }
+                            { icon: TrendingUp, title: "Career Growth", desc: "Clear advancement paths and mentorship programs", color: "from-[#00142E] to-[#0A1C30]" },
+                            { icon: Users, title: "Great Team", desc: "Collaborative environment with talented professionals", color: "from-[#CB2A25] to-[#a82220]" },
+                            { icon: Coffee, title: "Work-Life Balance", desc: "Flexible schedules and remote work options", color: "from-[#D1CBB7] to-[#b8b29e]" },
+                            { icon: Award, title: "Recognition", desc: "Your achievements get noticed and rewarded", color: "from-[#0A1C30] to-[#02152B]" },
+                            { icon: Shield, title: "Health & Wellness", desc: "Comprehensive health benefits and wellness programs", color: "from-[#CB2A25] to-[#a82220]" },
+                            { icon: Zap, title: "Innovation", desc: "Work on cutting-edge projects with latest tech", color: "from-[#00142E] to-[#0A1C30]" },
+                            { icon: Target, title: "Impact", desc: "Make a real difference in millions of lives", color: "from-[#02152B] to-[#00142E]" },
+                            { icon: Wifi, title: "Modern Office", desc: "State-of-the-art facilities and equipment", color: "from-[#CB2A25] to-[#a82220]" }
                         ].map((benefit, index) => (
                             <motion.div
                                 key={index}
@@ -321,7 +323,7 @@ export default function CareerPage() {
                                 {(selectedFilters.locations.length > 0 || selectedFilters.experience.length > 0 || selectedFilters.type.length > 0 || selectedFilters.department.length > 0 || selectedFilters.workStyle.length > 0) && (
                                     <button
                                         onClick={clearFilters}
-                                        className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                                        className="text-sm font-medium text-[#CB2A25] hover:text-[#a82220] transition-colors"
                                     >
                                         Clear All
                                     </button>
@@ -374,12 +376,12 @@ export default function CareerPage() {
                         <Button
                             onClick={() => setIsMobileFiltersOpen(true)}
                             variant="outline"
-                            className="w-full flex items-center justify-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 transition-all h-14 text-base font-medium"
+                            className="w-full flex items-center justify-center gap-2 border-[#CB2A25]/30 text-[#CB2A25] hover:bg-[#CB2A25]/5 transition-all h-14 text-base font-medium"
                         >
                             <Filter className="h-5 w-5" />
                             Filters
                             {Object.values(selectedFilters).filter(arr => arr.length > 0).length > 0 && (
-                                <span className="ml-2 px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
+                                <span className="ml-2 px-3 py-1 bg-[#CB2A25] text-white text-sm rounded-full">
                                     {Object.values(selectedFilters).filter(arr => arr.length > 0).length}
                                 </span>
                             )}
@@ -397,7 +399,7 @@ export default function CareerPage() {
                             <h2 className="text-3xl font-bold text-gray-900">
                                 {filteredJobs.length} {filteredJobs.length === 1 ? 'Job' : 'Jobs'} Available
                             </h2>
-                            <div className="text-sm text-gray-500 flex items-center gap-1 cursor-pointer hover:text-blue-600 transition-colors">
+                            <div className="text-sm text-gray-500 flex items-center gap-1 cursor-pointer hover:text-[#CB2A25] transition-colors">
                                 Sort by: <span className="font-medium text-gray-900">Most Relevant</span>
                                 <ChevronRight className="h-4 w-4" />
                             </div>
@@ -433,7 +435,7 @@ export default function CareerPage() {
                                     </div>
                                     <h3 className="text-2xl font-medium text-gray-900 mb-4">No jobs found</h3>
                                     <p className="text-gray-500 mb-8 max-w-md mx-auto text-lg">Try adjusting your search or filters to find what you're looking for.</p>
-                                    <Button onClick={clearFilters} variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 transition-all h-14 px-8 text-base font-medium">
+                                    <Button onClick={clearFilters} variant="outline" className="border-[#CB2A25]/30 text-[#CB2A25] hover:bg-[#CB2A25]/5 transition-all h-14 px-8 text-base font-medium">
                                         Clear Filters
                                     </Button>
                                 </motion.div>
@@ -512,13 +514,13 @@ export default function CareerPage() {
                                     <Button
                                         onClick={clearFilters}
                                         variant="outline"
-                                        className="w-full border-blue-200 text-blue-600 hover:bg-blue-50 transition-all h-12"
+                                        className="w-full border-[#CB2A25]/30 text-[#CB2A25] hover:bg-[#CB2A25]/5 transition-all h-12"
                                     >
                                         Clear All Filters
                                     </Button>
                                     <Button
                                         onClick={() => setIsMobileFiltersOpen(false)}
-                                        className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white transition-all h-12"
+                                        className="w-full bg-[#00142E] hover:bg-[#0A1C30] text-white transition-all h-12"
                                     >
                                         Show {filteredJobs.length} Jobs
                                     </Button>

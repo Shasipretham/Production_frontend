@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Mail, User, MessageSquare, Paperclip, CheckCircle, Loader2, AlertCircle } from "lucide-react"
+import { Send, Mail, User, MessageSquare, CheckCircle, Loader2, AlertCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { CountryCodeSelect } from "@/components/ui/CountryCodeSelect"
 import { useState } from "react"
@@ -75,23 +75,23 @@ export function ContactForm() {
 
     return (
         <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 via-cyan-600/20 to-emerald-600/20 rounded-3xl blur-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#CB2A25]/20 via-[#0A1C30]/20 to-[#D1CBB7]/20 rounded-3xl blur-3xl" />
             <div className="relative bg-white/10 backdrop-blur-xl p-8 md:p-12 rounded-3xl shadow-2xl border border-white/20">
                 {/* Header Section */}
                 <div className="mb-10">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-500/20 to-cyan-500/20 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2 mb-6"
+                        className="inline-flex items-center gap-2 bg-[#CB2A25]/10 backdrop-blur-sm border border-[#CB2A25]/20 rounded-full px-4 py-2 mb-6"
                     >
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
                         <span className="text-sm text-white/90 font-medium">We respond within 24 hours</span>
                     </motion.div>
 
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white to-white/80 bg-clip-text">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
                         Start a Conversation
                     </h2>
-                    <p className="text-lg text-white/60 max-w-2xl leading-relaxed">
+                    <p className="text-lg text-[#D1CBB7]/60 max-w-2xl leading-relaxed">
                         Whether you have a question about features, pricing, or anything else, our team is ready to answer all your questions.
                     </p>
                 </div>
@@ -109,7 +109,7 @@ export function ContactForm() {
                                 <CheckCircle className="h-10 w-10 text-white" />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-3">Message Sent Successfully!</h3>
-                            <p className="text-white/60 mb-8 max-w-md mx-auto">
+                            <p className="text-[#D1CBB7]/60 mb-8 max-w-md mx-auto">
                                 Thank you for reaching out. We'll get back to you within 24 hours.
                             </p>
                             <button
@@ -131,20 +131,20 @@ export function ContactForm() {
                             {/* Personal Information Section */}
                             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                    <User className="h-5 w-5 text-violet-400" />
+                                    <User className="h-5 w-5 text-[#CB2A25]" />
                                     Personal Information
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-5">
                                     <div>
                                         <label htmlFor="firstName" className="block text-sm font-medium text-white/70 mb-2">First Name *</label>
                                         <div className="relative group">
-                                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40 group-focus-within:text-violet-400 transition-colors" />
+                                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40 group-focus-within:text-[#CB2A25] transition-colors" />
                                             <Input
                                                 id="firstName"
                                                 placeholder="John"
                                                 value={firstName}
                                                 onChange={(e) => setFirstName(e.target.value)}
-                                                className="pl-10 bg-white/5 border-white/10 focus:border-violet-400 focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl"
+                                                className="pl-10 bg-white/5 border-white/10 focus:border-[#CB2A25] focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl"
                                                 required
                                             />
                                         </div>
@@ -152,13 +152,13 @@ export function ContactForm() {
                                     <div>
                                         <label htmlFor="lastName" className="block text-sm font-medium text-white/70 mb-2">Last Name *</label>
                                         <div className="relative group">
-                                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40 group-focus-within:text-violet-400 transition-colors" />
+                                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40 group-focus-within:text-[#CB2A25] transition-colors" />
                                             <Input
                                                 id="lastName"
                                                 placeholder="Doe"
                                                 value={lastName}
                                                 onChange={(e) => setLastName(e.target.value)}
-                                                className="pl-10 bg-white/5 border-white/10 focus:border-violet-400 focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl"
+                                                className="pl-10 bg-white/5 border-white/10 focus:border-[#CB2A25] focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl"
                                                 required
                                             />
                                         </div>
@@ -169,21 +169,21 @@ export function ContactForm() {
                             {/* Contact Information Section */}
                             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                    <Mail className="h-5 w-5 text-cyan-400" />
+                                    <Mail className="h-5 w-5 text-[#D1CBB7]" />
                                     Contact Details
                                 </h3>
                                 <div className="space-y-5">
                                     <div>
                                         <label htmlFor="email" className="block text-sm font-medium text-white/70 mb-2">Email Address *</label>
                                         <div className="relative group">
-                                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40 group-focus-within:text-cyan-400 transition-colors" />
+                                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40 group-focus-within:text-[#D1CBB7] transition-colors" />
                                             <Input
                                                 id="email"
                                                 type="email"
                                                 placeholder="john@example.com"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
-                                                className="pl-10 bg-white/5 border-white/10 focus:border-cyan-400 focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl"
+                                                className="pl-10 bg-white/5 border-white/10 focus:border-[#D1CBB7] focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl"
                                                 required
                                             />
                                         </div>
@@ -206,7 +206,7 @@ export function ContactForm() {
                                                 placeholder="123-4567"
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
-                                                className="bg-white/5 border-white/10 focus:border-cyan-400 focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl flex-1"
+                                                className="bg-white/5 border-white/10 focus:border-[#D1CBB7] focus:bg-white/10 text-white placeholder:text-white/30 transition-all h-12 rounded-xl flex-1"
                                             />
                                         </div>
                                     </div>
@@ -228,11 +228,11 @@ export function ContactForm() {
                                             className="w-full h-12 px-4 bg-white/5 border border-white/10 focus:border-emerald-400 focus:bg-white/10 text-white rounded-xl transition-all"
                                             required
                                         >
-                                            <option value="" className="bg-slate-800">Select a topic</option>
-                                            <option value="General Inquiry" className="bg-slate-800">General Inquiry</option>
-                                            <option value="Technical Support" className="bg-slate-800">Technical Support</option>
-                                            <option value="Billing Question" className="bg-slate-800">Billing Question</option>
-                                            <option value="Partnership Opportunity" className="bg-slate-800">Partnership Opportunity</option>
+                                            <option value="" className="bg-[#0A1C30]">Select a topic</option>
+                                            <option value="General Inquiry" className="bg-[#0A1C30]">General Inquiry</option>
+                                            <option value="Technical Support" className="bg-[#0A1C30]">Technical Support</option>
+                                            <option value="Billing Question" className="bg-[#0A1C30]">Billing Question</option>
+                                            <option value="Partnership Opportunity" className="bg-[#0A1C30]">Partnership Opportunity</option>
                                         </select>
                                     </div>
                                     <div>
@@ -259,10 +259,10 @@ export function ContactForm() {
                                 <motion.div
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl"
+                                    className="flex items-center gap-3 p-4 bg-[#CB2A25]/10 border border-[#CB2A25]/20 rounded-xl"
                                 >
-                                    <AlertCircle className="h-5 w-5 text-red-400 shrink-0" />
-                                    <p className="text-sm text-red-300">{error}</p>
+                                    <AlertCircle className="h-5 w-5 text-[#CB2A25] shrink-0" />
+                                    <p className="text-sm text-[#CB2A25]">{error}</p>
                                 </motion.div>
                             )}
 
@@ -273,16 +273,16 @@ export function ContactForm() {
                                         type="checkbox"
                                         checked={agreed}
                                         onChange={(e) => setAgreed(e.target.checked)}
-                                        className="mt-1 w-4 h-4 rounded border-white/20 bg-white/10 text-violet-500 focus:ring-violet-400 focus:ring-offset-0"
+                                        className="mt-1 w-4 h-4 rounded border-white/20 bg-white/10 text-[#CB2A25] focus:ring-[#CB2A25] focus:ring-offset-0"
                                     />
                                     <span className="text-sm text-white/60">
-                                        I agree to the <a href="#" className="text-violet-400 hover:text-violet-300 underline">Privacy Policy</a> and <a href="#" className="text-violet-400 hover:text-violet-300 underline">Terms of Service</a>
+                                        I agree to the <a href="#" className="text-[#CB2A25] hover:text-[#CB2A25]/80 underline">Privacy Policy</a> and <a href="#" className="text-[#CB2A25] hover:text-[#CB2A25]/80 underline">Terms of Service</a>
                                     </span>
                                 </label>
                                 <Button
                                     type="submit"
                                     disabled={!canSubmit}
-                                    className="group relative px-8 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                    className="group relative px-8 py-3 bg-[#CB2A25] hover:bg-[#a82220] text-white font-semibold rounded-xl shadow-lg shadow-[#CB2A25]/25 transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                                 >
                                     <span className="flex items-center gap-2">
                                         {sending ? (

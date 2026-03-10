@@ -1,5 +1,5 @@
 import { MapPin, Mail, Phone, Clock, Globe, MessageCircle, Star, Shield } from "lucide-react"
-import { motion } from "framer-motion" // ← Missing import added here
+import { motion } from "framer-motion"
 
 const CONTACT_DETAILS = [
     {
@@ -59,16 +59,16 @@ export function ContactInfo() {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="group relative bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all hover:bg-white/10"
+                                className="group relative bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#CB2A25]/30 transition-all hover:bg-white/10"
                             >
                                 <div className="absolute top-4 right-4">
-                                    <span className="px-3 py-1 bg-violet-500/20 text-violet-300 text-xs font-semibold rounded-full">
+                                    <span className="px-3 py-1 bg-[#CB2A25]/20 text-[#CB2A25] text-xs font-semibold rounded-full">
                                         {item.badge}
                                     </span>
                                 </div>
                                 <div className="flex items-start gap-4">
-                                    <div className="p-3 rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/20 group-hover:from-violet-500/30 group-hover:to-cyan-500/30 transition-all duration-300">
-                                        <Icon className="h-6 w-6 text-violet-400" />
+                                    <div className="p-3 rounded-xl bg-[#CB2A25]/10 group-hover:bg-[#CB2A25]/20 transition-all duration-300">
+                                        <Icon className="h-6 w-6 text-[#CB2A25]" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-bold text-white text-lg mb-2">{item.title}</h3>
@@ -83,7 +83,7 @@ export function ContactInfo() {
             </div>
 
             {/* Features Section */}
-            <div className="bg-gradient-to-br from-violet-500/10 to-cyan-500/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20">
+            <div className="bg-gradient-to-br from-[#CB2A25]/10 to-[#D1CBB7]/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20">
                 <h3 className="text-2xl font-bold text-white mb-6">Why Choose Us</h3>
                 <div className="grid gap-4">
                     {FEATURES.map((feature, index) => {
@@ -96,8 +96,8 @@ export function ContactInfo() {
                                 transition={{ delay: index * 0.1 + 0.4 }}
                                 className="flex items-center gap-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
                             >
-                                <div className="p-2 bg-white/10 rounded-lg">
-                                    <Icon className="h-5 w-5 text-cyan-400" />
+                                <div className="p-2 bg-[#CB2A25]/10 rounded-lg">
+                                    <Icon className="h-5 w-5 text-[#CB2A25]" />
                                 </div>
                                 <div>
                                     <h4 className="font-semibold text-white">{feature.title}</h4>
@@ -118,7 +118,7 @@ export function ContactInfo() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#00142E] via-[#00142E]/50 to-transparent" />
 
                 <div className="absolute inset-0 flex items-center justify-center p-8">
                     <motion.div
@@ -127,10 +127,10 @@ export function ContactInfo() {
                         viewport={{ once: true }}
                         className="bg-white/10 backdrop-blur-xl p-8 rounded-2xl border border-white/20 text-center max-w-md w-full hover:bg-white/15 transition-all"
                     >
-                        <MapPin className="h-12 w-12 mx-auto mb-4 text-violet-400 animate-bounce" />
+                        <MapPin className="h-12 w-12 mx-auto mb-4 text-[#CB2A25] animate-bounce" />
                         <h3 className="text-2xl font-bold text-white mb-2">Visit Our Office</h3>
                         <p className="text-white/70 mb-4">Experience our innovation hub firsthand</p>
-                        <button className="px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-violet-600 hover:to-cyan-600 transition-all">
+                        <button className="px-6 py-3 bg-[#CB2A25] hover:bg-[#a82220] text-white font-semibold rounded-xl transition-all">
                             Get Directions
                         </button>
                     </motion.div>
