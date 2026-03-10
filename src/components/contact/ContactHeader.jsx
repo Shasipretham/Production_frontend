@@ -1,10 +1,7 @@
-import { useState } from "react"
 import { motion } from "framer-motion"
 import { Sparkles, ArrowDown, Globe, Users, Zap } from "lucide-react"
-import { ScheduleCallModal } from "@/components/contact/ScheduleCallModal"
 
 export function ContactHeader() {
-    const [scheduleOpen, setScheduleOpen] = useState(false)
     const stats = [
         { icon: Users, label: "Happy Clients", value: "10,000+" },
         { icon: Globe, label: "Countries", value: "50+" },
@@ -74,26 +71,18 @@ export function ContactHeader() {
                 })}
             </motion.div>
 
-            {/* CTA Buttons */}
+            {/* CTA Button */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                className="flex items-center justify-center"
             >
                 <button className="group px-8 py-4 bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:scale-[1.02]">
                     Start a Project
                     <ArrowDown className="inline-block ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
                 </button>
-                <button
-                    onClick={() => setScheduleOpen(true)}
-                    className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-xl transition-all hover:scale-[1.02]"
-                >
-                    Schedule a Call
-                </button>
             </motion.div>
-
-            <ScheduleCallModal isOpen={scheduleOpen} onClose={() => setScheduleOpen(false)} />
         </div>
     )
 }
