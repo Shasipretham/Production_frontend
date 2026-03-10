@@ -185,19 +185,19 @@ export const hostApi = createApi({
         getApprovedEvents: builder.query({
             query: (arg) => {
                 // Support both string (countryCode) and object ({ code, limit })
-                let code = typeof arg === 'string' ? arg : arg?.code;
+                let code = typeof arg === 'string' ? arg : (arg?.name || arg?.code);
                 const limit = typeof arg === 'object' ? arg?.limit : undefined;
 
-                // Events prefer country CODE (e.g. "IN")
+                // Events in the database use country NAME (e.g. "India")
                 if (!code) {
                     const countryData = localStorage.getItem("selectedCountry");
                     if (countryData) {
                         try {
                             const c = JSON.parse(countryData);
-                            code = c.code || "IN";
+                            code = c.name || "India";
                         } catch (e) { console.error(e); }
                     }
-                    if (!code) code = "IN";
+                    if (!code) code = "India";
                 }
 
                 return {
@@ -216,16 +216,16 @@ export const hostApi = createApi({
         getEventById: builder.query({
             query: (id) => {
                 const countryData = localStorage.getItem("selectedCountry");
-                let countryCode = "IN";
+                let countryName = "India";
                 if (countryData) {
                     try {
                         const c = JSON.parse(countryData);
-                        if (c.code) countryCode = c.code;
+                        if (c.name) countryName = c.name;
                     } catch (e) { }
                 }
                 return {
                     url: `events/${id}`,
-                    headers: { "X-Country": countryCode }
+                    headers: { "X-Country": countryName }
                 };
             },
             transformResponse: (response) => {
@@ -528,6 +528,7 @@ export const hostApi = createApi({
                 url: `community/communities/${id}/posts`,
                 method: "POST",
                 body: data,
+                formData: true,
             }),
             invalidatesTags: (result, error, { id }) => [{ type: "Community", id: `FEED-${id}` }],
         }),
@@ -559,6 +560,7 @@ export const hostApi = createApi({
                 url: `community/communities/${id}/resources`,
                 method: "POST",
                 body: data,
+                formData: true,
             }),
             invalidatesTags: (result, error, { id }) => [{ type: "Community", id: `RESOURCES-${id}` }],
         }),

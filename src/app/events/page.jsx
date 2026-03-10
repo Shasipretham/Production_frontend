@@ -25,7 +25,7 @@ const DEBOUNCE_DELAY = 100
 const EventsPage = () => {
   const navigate = useNavigate()
   const { activeCountry } = useCountry()
-  const { data: apiEvents = [], isLoading, isError } = useGetApprovedEventsQuery(activeCountry?.code)
+  const { data: apiEvents = [], isLoading, isError } = useGetApprovedEventsQuery(activeCountry?.name)
 
   // (Removed handleScroll and visibleSections logic)
   const [activeFilter, setActiveFilter] = useState("all")
