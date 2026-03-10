@@ -160,7 +160,7 @@ export default function CareerPage() {
                         className="text-center mb-8 sm:mb-10 md:mb-12"
                     >
                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-                            Find Your Dream Job at <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-500">NextKinLife</span>
+                            Find Your Dream Job at <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-500">NextKinLife LLC</span>
                         </h1>
                         <p className="text-white/90 max-w-3xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
                             Join our team of innovators and change-makers. Discover opportunities that align with your passion and skills in a collaborative, inclusive environment.

@@ -1,7 +1,10 @@
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { Sparkles, ArrowDown, Globe, Users, Zap } from "lucide-react"
+import { ScheduleCallModal } from "@/components/contact/ScheduleCallModal"
 
 export function ContactHeader() {
+    const [scheduleOpen, setScheduleOpen] = useState(false)
     const stats = [
         { icon: Users, label: "Happy Clients", value: "10,000+" },
         { icon: Globe, label: "Countries", value: "50+" },
@@ -20,7 +23,7 @@ export function ContactHeader() {
                 <Sparkles className="h-4 w-4 text-violet-400 animate-pulse" />
                 <span className="text-sm text-white/90 font-medium">Trusted by industry leaders worldwide</span>
             </motion.div>
-            
+
             {/* Main Heading */}
             <motion.h1
                 initial={{ opacity: 0, y: 30 }}
@@ -36,7 +39,7 @@ export function ContactHeader() {
                     Something Amazing
                 </span>
             </motion.h1>
-            
+
             {/* Subheading */}
             <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -44,7 +47,7 @@ export function ContactHeader() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-xl md:text-2xl text-white/60 max-w-4xl mx-auto leading-relaxed mb-12"
             >
-                Transform your ideas into reality with our expert team. 
+                Transform your ideas into reality with our expert team.
                 From concept to launch, we're here to support your journey every step of the way.
             </motion.p>
 
@@ -82,10 +85,15 @@ export function ContactHeader() {
                     Start a Project
                     <ArrowDown className="inline-block ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
                 </button>
-                <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-xl transition-all hover:scale-[1.02]">
+                <button
+                    onClick={() => setScheduleOpen(true)}
+                    className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-xl transition-all hover:scale-[1.02]"
+                >
                     Schedule a Call
                 </button>
             </motion.div>
+
+            <ScheduleCallModal isOpen={scheduleOpen} onClose={() => setScheduleOpen(false)} />
         </div>
     )
 }

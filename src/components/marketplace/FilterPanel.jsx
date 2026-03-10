@@ -87,7 +87,7 @@ export function FilterPanel({ filters, onChange }) {
         <div className="mt-4 grid grid-cols-1 text-[#00152d] text-md md:grid-cols-3 gap-6 border-t pt-4">
 
           {/* LOCATION SECTION */}
-          {(open.all || open.location) && (
+          {/* {(open.all || open.location) && (
             <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b border-gray-100">
               <SearchableDropdown
                 label="Country"
@@ -137,7 +137,7 @@ export function FilterPanel({ filters, onChange }) {
                 }}
               />
             </div>
-          )}
+          )} */}
 
           {/* PRICE */}
           {(open.all || open.price) && (

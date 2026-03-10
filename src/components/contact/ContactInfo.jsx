@@ -12,7 +12,7 @@ const CONTACT_DETAILS = [
     {
         icon: Mail,
         title: "Email Us",
-        content: "careers@nextkinlife.com",
+        content: "accommodations.nextkinlife@gmail.com",
         subcontent: "support@nextkinlife.com",
         badge: "24/7 Support"
     },
@@ -54,8 +54,8 @@ export function ContactInfo() {
                     {CONTACT_DETAILS.map((item, index) => {
                         const Icon = item.icon
                         return (
-                            <motion.div 
-                                key={index} 
+                            <motion.div
+                                key={index}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: index * 0.1 }}
@@ -89,7 +89,7 @@ export function ContactInfo() {
                     {FEATURES.map((feature, index) => {
                         const Icon = feature.icon
                         return (
-                            <motion.div 
+                            <motion.div
                                 key={index}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -119,9 +119,9 @@ export function ContactInfo() {
                     />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
-                
+
                 <div className="absolute inset-0 flex items-center justify-center p-8">
-                    <motion.div 
+                    <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         whileInView={{ scale: 1, opacity: 1 }}
                         viewport={{ once: true }}

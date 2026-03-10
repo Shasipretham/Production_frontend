@@ -109,9 +109,6 @@ export default function NewDashboard() {
   /* -------------------------------
      Update handler
   -------------------------------- */
-  /* -------------------------------
-     Update handler
-  -------------------------------- */
   const [updateUserProfile, { isLoading: isUpdating }] = useUpdateUserProfileMutation();
 
   const handleUpdatePersonalInfo = async (formData) => {

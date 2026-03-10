@@ -518,6 +518,14 @@ export function Navbar({ minimal = false, onMenuClick }) {
                                                     My Listings
                                                 </Link>
                                                 <Link
+                                                    to="/account-v2?tab=buy-sell"
+                                                    className="flex items-center gap-3 px-3 py-2 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                >
+                                                    <ShoppingBag className="h-4 w-4 opacity-70" />
+                                                    My Buy/Sell
+                                                </Link>
+                                                <Link
                                                     to="/account-v2?tab=wishlist"
                                                     className="flex items-center gap-3 px-3 py-2 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all"
                                                     onClick={() => setIsProfileOpen(false)}
@@ -816,6 +824,38 @@ export function Navbar({ minimal = false, onMenuClick }) {
                                                 >
                                                     <User className="w-5 h-5" />
                                                     <span>Personal Info</span>
+                                                </Link>
+                                                <Link
+                                                    to="/account-v2?tab=listings"
+                                                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-white/70 hover:text-white"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <Building className="w-5 h-5" />
+                                                    <span>My Listings</span>
+                                                </Link>
+                                                <Link
+                                                    to="/account-v2?tab=buy-sell"
+                                                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-white/70 hover:text-white"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <ShoppingBag className="w-5 h-5" />
+                                                    <span>My Buy/Sell</span>
+                                                </Link>
+                                                <Link
+                                                    to="/account-v2?tab=applications"
+                                                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-white/70 hover:text-white"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <Briefcase className="w-5 h-5" />
+                                                    <span>My Applications</span>
+                                                </Link>
+                                                <Link
+                                                    to="/account-v2?tab=wishlist"
+                                                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-white/70 hover:text-white"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <Heart className="w-5 h-5" />
+                                                    <span>My Wishlist</span>
                                                 </Link>
                                                 <Link
                                                     to="/account-v2?tab=trips"
