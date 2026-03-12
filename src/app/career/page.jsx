@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useRef, useEffect } from "react"
 import { Navbar } from "@/components/layout/Navbar"
 import { Footer } from "@/components/layout/Footer"
 import { JobCard } from "@/components/career/JobCard"
@@ -8,7 +8,11 @@ import { FilterSection } from "@/components/career/FilterSection"
 import { JobDetailsModal } from "@/components/career/JobDetailsModal"
 import { FILTERS } from "@/lib/mock-jobs"
 import { useGetJobsQuery } from "@/store/api/hostApi"
-import { Search, MapPin, Filter, X, Briefcase, Clock, DollarSign, Building, Calendar, Users, TrendingUp, Award, ChevronRight, Star, ArrowRight, Globe, Zap, Shield, Target, Sparkles, Coffee, Wifi, Heart, Home } from 'lucide-react'
+import {
+    Search, MapPin, Filter, X, Briefcase, Building, Globe,
+    TrendingUp, Users, Coffee, Award, Shield, Zap, Target, Wifi,
+    ChevronRight, Star, Sparkles, Home, ArrowRight, Loader2
+} from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePagination } from "@/hooks/usePagination"
@@ -16,7 +20,7 @@ import { Pagination } from "@/components/ui/Pagination"
 import { useCountry } from "@/context/CountryContext"
 
 export default function CareerPage() {
-    const jobListRef = React.useRef(null)
+    const jobListRef = useRef(null)
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedFilters, setSelectedFilters] = useState({
         locations: [],
@@ -28,11 +32,39 @@ export default function CareerPage() {
     })
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
     const [selectedJob, setSelectedJob] = useState(null)
-    const [hoveredJobId, setHoveredJobId] = useState(null)
     const [activeTab, setActiveTab] = useState("all")
 
     const { activeCountry } = useCountry()
-    const { data: jobs = [], isLoading } = useGetJobsQuery(activeCountry?.name)
+
+    // Fetch data
+    const { data: apiResponse, isLoading, isError } = useGetJobsQuery()
+
+    // --- CRITICAL FIX: DATA NORMALIZATION ---
+    // The API returns 'experience_level', 'employment_type', etc., but the UI expects 'experience', 'type'.
+    // The API returns skills as an object, but the UI expects an array.
+    // This hook transforms the raw API data into the shape the components need.
+    // apiResponse is already the transformed jobs array from hostApi's transformResponse
+    const jobs = useMemo(() => {
+        const rawJobs = Array.isArray(apiResponse) ? apiResponse : [];
+
+        if (!rawJobs.length) return [];
+
+        return rawJobs.map((job) => {
+            // Flatten skills object into a single array if skills is an object
+            const skillsArray = Array.isArray(job.skills)
+                ? job.skills
+                : [
+                    ...(job.skills?.primary || []),
+                    ...(job.skills?.secondary || []),
+                    ...(job.skills?.nice_to_have || [])
+                ];
+
+            return {
+                ...job,
+                skills: skillsArray
+            };
+        });
+    }, [apiResponse]);
 
     const handleViewDetails = (job) => {
         setSelectedJob(job)
@@ -47,15 +79,16 @@ export default function CareerPage() {
                 : [...current, value]
             return { ...prev, [category]: updated }
         })
-        // Scroll to job results after filter change
+
+        // Scroll to job results after filter change (debounced slightly)
         setTimeout(() => {
             if (jobListRef.current) {
-                const yOffset = -150; // Adjust for sticky header
+                const yOffset = -150;
                 const element = jobListRef.current;
-                const headingPosition = element.getBoundingClientRect().top + window.scrollY + yOffset;
-                window.scrollTo({ top: headingPosition, behavior: 'smooth' });
+                const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
             }
-        }, 150)
+        }, 100)
     }
 
     // Clear all filters
@@ -71,19 +104,21 @@ export default function CareerPage() {
         setSearchQuery("")
     }
 
-    // Filter jobs
+    // Filter jobs logic
     const filteredJobs = useMemo(() => {
         return jobs.filter(job => {
-            // Search query - safely handle undefined fields
+            // Search Query
             const searchLower = searchQuery.toLowerCase();
             const matchesSearch = !searchQuery ||
                 (job.title?.toLowerCase() || '').includes(searchLower) ||
                 (job.company?.toLowerCase() || '').includes(searchLower) ||
                 (job.department?.toLowerCase() || '').includes(searchLower) ||
                 (job.description?.toLowerCase() || '').includes(searchLower) ||
-                job.skills?.some(skill => (skill?.toLowerCase() || '').includes(searchLower))
+                // Safe check for skills array
+                (Array.isArray(job.skills) && job.skills.some(skill => (skill?.toLowerCase() || '').includes(searchLower)))
 
-            // Filters - safely handle undefined fields
+            // Filters
+            // Note: Ensure the values in your FILTERS constant match the API values exactly (case-sensitive)
             const matchesLocation = selectedFilters.locations.length === 0 || selectedFilters.locations.includes(job.location)
             const matchesExperience = selectedFilters.experience.length === 0 || selectedFilters.experience.includes(job.experience)
             const matchesSalary = selectedFilters.salary.length === 0 || selectedFilters.salary.includes(job.salary)
@@ -102,9 +137,7 @@ export default function CareerPage() {
         })
     }, [searchQuery, selectedFilters, activeTab, jobs])
 
-
-
-    // ✅ Pagination
+    // Pagination
     const {
         currentItems: paginatedJobs,
         currentPage,
@@ -117,9 +150,7 @@ export default function CareerPage() {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
+            transition: { staggerChildren: 0.1 }
         }
     }
 
@@ -128,9 +159,7 @@ export default function CareerPage() {
         visible: {
             y: 0,
             opacity: 1,
-            transition: {
-                duration: 0.4
-            }
+            transition: { duration: 0.4 }
         }
     }
 
@@ -141,14 +170,52 @@ export default function CareerPage() {
         { id: "new", label: "New", icon: Sparkles }
     ]
 
+    // --- LOADING STATE ---
+    if (isLoading) {
+        return (
+            <main className="min-h-screen bg-gradient-to-br from-gray-50 via-[#D1CBB7]/10 to-gray-50 font-sans flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center">
+                        <Loader2 className="h-12 w-12 animate-spin text-[#CB2A25] mx-auto mb-4" />
+                        <p className="text-gray-500 text-lg">Loading opportunities...</p>
+                    </div>
+                </div>
+                <Footer />
+            </main>
+        )
+    }
+
+    // --- ERROR STATE ---
+    if (isError) {
+        return (
+            <main className="min-h-screen bg-gradient-to-br from-gray-50 via-[#D1CBB7]/10 to-gray-50 font-sans flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center px-4">
+                    <div className="text-center max-w-md">
+                        <div className="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <X className="h-10 w-10 text-red-500" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Unable to load jobs</h2>
+                        <p className="text-gray-600 mb-6">There was a problem fetching the job listings. Please try again later.</p>
+                        <Button onClick={() => window.location.reload()} className="bg-[#CB2A25] hover:bg-[#a82220] text-white">
+                            Retry
+                        </Button>
+                    </div>
+                </div>
+                <Footer />
+            </main>
+        )
+    }
+
     return (
         <main className="min-h-screen bg-gradient-to-br from-gray-50 via-[#D1CBB7]/10 to-gray-50 font-sans">
             <Navbar />
 
-            {/* Enhanced Hero Section with Logo Colors */}
+            {/* Hero Section */}
             <div className="bg-gradient-to-br from-[#00142E] via-[#0A1C30] to-[#02152B] pt-24 sm:pt-28 pb-12 sm:pb-16 md:pb-20 px-4 relative overflow-hidden">
-                {/* Animated background elements with brand colors */}
-                <div className="absolute inset-0 overflow-hidden">
+                {/* Animated background elements */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#CB2A25] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
                     <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#D1CBB7] rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-pulse animation-delay-2000"></div>
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#0A1C30] rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
@@ -165,11 +232,11 @@ export default function CareerPage() {
                             Find Your Dream Job at <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#CB2A25] to-[#D1CBB7] whitespace-nowrap">NextKinLife LLC</span>
                         </h1>
                         <p className="text-white/90 max-w-3xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
-                            Join our team of innovators and change-makers. Discover opportunities that align with your passion and skills in a collaborative, inclusive environment.
+                            Join our team of innovators and change-makers. Discover opportunities that align with your passion and skills.
                         </p>
                     </motion.div>
 
-                    {/* Smaller Search Bar with Logo Colors */}
+                    {/* Search Bar */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -193,6 +260,7 @@ export default function CareerPage() {
                                 type="text"
                                 placeholder="Location or Remote"
                                 className="w-full h-12 pl-12 pr-4 rounded-xl outline-none bg-white/90 text-gray-900 placeholder:text-gray-500 focus:ring-4 focus:ring-white/30 transition-all text-base"
+                            // Note: Implement location search logic if needed
                             />
                         </div>
                         <Button className="h-12 px-8 bg-[#CB2A25] hover:bg-[#a82220] text-white rounded-xl font-bold text-base shadow-xl transition-all hover:shadow-2xl flex items-center gap-2">
@@ -201,7 +269,7 @@ export default function CareerPage() {
                         </Button>
                     </motion.div>
 
-                    {/* Enhanced Job stats with logo colors */}
+                    {/* Stats */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -224,11 +292,11 @@ export default function CareerPage() {
                 </div>
             </div>
 
-            {/* Job Category Tabs with logo colors */}
+            {/* Job Category Tabs */}
             <div className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-100">
                 <div className="container mx-auto max-w-6xl px-4">
                     <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center gap-2 overflow-x-auto">
+                        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
@@ -250,7 +318,7 @@ export default function CareerPage() {
                 </div>
             </div>
 
-            {/* Enhanced Company Benefits Section with logo colors */}
+            {/* Benefits Section */}
             <section className="py-10 sm:py-12 md:py-16 px-4 bg-gradient-to-br from-gray-50 to-white">
                 <div className="container mx-auto max-w-6xl">
                     <motion.div
@@ -262,7 +330,7 @@ export default function CareerPage() {
                     >
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Why Work With Us</h2>
                         <p className="text-gray-600 max-w-3xl mx-auto text-lg">
-                            We offer competitive benefits, a supportive work environment, and opportunities for growth. Join us in making a difference.
+                            We offer competitive benefits, a supportive work environment, and opportunities for growth.
                         </p>
                     </motion.div>
 
@@ -274,14 +342,14 @@ export default function CareerPage() {
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8"
                     >
                         {[
-                            { icon: TrendingUp, title: "Career Growth", desc: "Clear advancement paths and mentorship programs", color: "from-[#00142E] to-[#0A1C30]" },
-                            { icon: Users, title: "Great Team", desc: "Collaborative environment with talented professionals", color: "from-[#CB2A25] to-[#a82220]" },
-                            { icon: Coffee, title: "Work-Life Balance", desc: "Flexible schedules and remote work options", color: "from-[#D1CBB7] to-[#b8b29e]" },
-                            { icon: Award, title: "Recognition", desc: "Your achievements get noticed and rewarded", color: "from-[#0A1C30] to-[#02152B]" },
-                            { icon: Shield, title: "Health & Wellness", desc: "Comprehensive health benefits and wellness programs", color: "from-[#CB2A25] to-[#a82220]" },
-                            { icon: Zap, title: "Innovation", desc: "Work on cutting-edge projects with latest tech", color: "from-[#00142E] to-[#0A1C30]" },
-                            { icon: Target, title: "Impact", desc: "Make a real difference in millions of lives", color: "from-[#02152B] to-[#00142E]" },
-                            { icon: Wifi, title: "Modern Office", desc: "State-of-the-art facilities and equipment", color: "from-[#CB2A25] to-[#a82220]" }
+                            { icon: TrendingUp, title: "Career Growth", desc: "Clear advancement paths", color: "from-[#00142E] to-[#0A1C30]" },
+                            { icon: Users, title: "Great Team", desc: "Collaborative environment", color: "from-[#CB2A25] to-[#a82220]" },
+                            { icon: Coffee, title: "Work-Life Balance", desc: "Flexible schedules", color: "from-[#D1CBB7] to-[#b8b29e]" },
+                            { icon: Award, title: "Recognition", desc: "Achievements rewarded", color: "from-[#0A1C30] to-[#02152B]" },
+                            { icon: Shield, title: "Health & Wellness", desc: "Comprehensive benefits", color: "from-[#CB2A25] to-[#a82220]" },
+                            { icon: Zap, title: "Innovation", desc: "Cutting-edge projects", color: "from-[#00142E] to-[#0A1C30]" },
+                            { icon: Target, title: "Impact", desc: "Make a difference", color: "from-[#02152B] to-[#00142E]" },
+                            { icon: Wifi, title: "Modern Office", desc: "State-of-the-art facilities", color: "from-[#CB2A25] to-[#a82220]" }
                         ].map((benefit, index) => (
                             <motion.div
                                 key={index}
@@ -307,7 +375,7 @@ export default function CareerPage() {
             <div className="container mx-auto max-w-7xl px-4 py-12">
                 <div className="flex flex-col lg:flex-row gap-8">
 
-                    {/* Enhanced LEFT SIDEBAR - FILTERS with logo colors */}
+                    {/* LEFT SIDEBAR - FILTERS */}
                     <aside className="hidden lg:block w-80 flex-shrink-0">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -320,7 +388,7 @@ export default function CareerPage() {
                                     <Filter className="h-5 w-5" />
                                     Filters
                                 </h3>
-                                {(selectedFilters.locations.length > 0 || selectedFilters.experience.length > 0 || selectedFilters.type.length > 0 || selectedFilters.department.length > 0 || selectedFilters.workStyle.length > 0) && (
+                                {(Object.values(selectedFilters).some(arr => arr.length > 0)) && (
                                     <button
                                         onClick={clearFilters}
                                         className="text-sm font-medium text-[#CB2A25] hover:text-[#a82220] transition-colors"
@@ -371,7 +439,7 @@ export default function CareerPage() {
                         </motion.div>
                     </aside>
 
-                    {/* Enhanced MOBILE FILTER TOGGLE with logo colors */}
+                    {/* MOBILE FILTER TOGGLE */}
                     <div className="lg:hidden mb-6">
                         <Button
                             onClick={() => setIsMobileFiltersOpen(true)}
@@ -388,7 +456,7 @@ export default function CareerPage() {
                         </Button>
                     </div>
 
-                    {/* Enhanced RIGHT CONTENT - JOB LIST */}
+                    {/* RIGHT CONTENT - JOB LIST */}
                     <div className="flex-1 scroll-mt-32" ref={jobListRef}>
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -413,7 +481,6 @@ export default function CareerPage() {
                                             <JobCard
                                                 job={job}
                                                 onViewDetails={handleViewDetails}
-                                                isHovered={hoveredJobId === job.id}
                                             />
                                         </div>
                                     ))}
@@ -445,7 +512,7 @@ export default function CareerPage() {
                 </div>
             </div>
 
-            {/* Enhanced MOBILE FILTERS MODAL with logo colors */}
+            {/* MOBILE FILTERS MODAL */}
             <AnimatePresence>
                 {isMobileFiltersOpen && (
                     <>
