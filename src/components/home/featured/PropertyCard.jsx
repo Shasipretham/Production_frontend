@@ -6,7 +6,7 @@ import {
     Globe, Twitter
 } from 'lucide-react';
 import { VerificationBadge } from '@/components/ui/VerificationBadge';
-import { MdEmail } from "react-icons/md";
+import { SiGmail } from "react-icons/si";
 import {
     FaWhatsapp,
     FaInstagram,
@@ -64,7 +64,9 @@ export const PropertyCard = ({ property }) => {
         area: property.area || property.stats?.area || "",
         guests: property.guests || property.stats?.guests || 0,
         price: {
-            amount: property.price_per_night || property.price_per_month || property.price_per_hour || property.pricing?.perNight || property.pricing?.perMonth || 0,
+            amount: (property.price_per_month || property.pricing?.perMonth) || 
+                    (property.price_per_night || property.pricing?.perNight) || 
+                    (property.price_per_hour || property.pricing?.perHour) || 0,
             currency: property.currency || property.pricing?.currency || 'INR',
             period: (property.price_per_month || property.pricing?.perMonth) ? 'month' : (property.price_per_night || property.pricing?.perNight) ? 'night' : 'hour'
         },
@@ -99,6 +101,12 @@ export const PropertyCard = ({ property }) => {
                 property.host?.twitter ||
                 property.Host?.x ||
                 property.Host?.User?.twitter ||
+                "",
+
+            email:
+                property.Host?.email ||
+                property.host?.email ||
+                property.email ||
                 ""
         }
 
@@ -136,6 +144,11 @@ export const PropertyCard = ({ property }) => {
                 url = value.startsWith("http")
                     ? value
                     : `https://twitter.com/${value.replace(/^@/, "")}`;
+                break;
+
+            case "email":
+                if (!value) return;
+                url = `mailto:${value}`;
                 break;
 
             default:
@@ -253,6 +266,18 @@ export const PropertyCard = ({ property }) => {
                                 title="WhatsApp"
                             >
                                 <FaWhatsapp className="w-4 h-4" />
+                            </button>
+                        )}
+
+                        {propertyData.socials.email && (
+                            <button
+                                onClick={(e) =>
+                                    handleSocialClick(e, "email", propertyData.socials.email)
+                                }
+                                className="w-7 h-7 rounded-full bg-red-100 text-[#EA4335] flex items-center justify-center hover:bg-[#EA4335] hover:text-white transition"
+                                title="Gmail"
+                            >
+                                <SiGmail className="w-3.5 h-3.5" />
                             </button>
                         )}
 

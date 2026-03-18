@@ -1,6 +1,7 @@
 import React from 'react';
 import { Heart, MapPin, Phone, Maximize, Instagram, Facebook, Linkedin, Twitter, Youtube, Globe } from 'lucide-react';
 import { FaWhatsapp, FaXTwitter, FaInstagram, FaFacebookF, FaLinkedinIn, FaYoutube, FaLink } from 'react-icons/fa6';
+import { SiGmail } from "react-icons/si";
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { VerificationBadge } from '@/components/ui/VerificationBadge';
@@ -40,13 +41,15 @@ export function ListingCard({ listing, layout = "grid" }) {
         linkedin: host?.linkedin || listing.linkedin || "",
         twitter: host?.twitter || host?.x || listing.twitter || listing.x || "",
         youtube: host?.youtube || listing.youtube || "",
-        website: host?.website || listing.website || ""
+        website: host?.website || listing.website || "",
+        email: host?.email || listing.email || ""
     };
 
     const normalizedSocials = {
         whatsapp: socials?.whatsapp?.trim() || null,
         instagram: socials?.instagram?.trim() || null,
         facebook: socials?.facebook?.trim() || null,
+        email: socials?.email?.trim() || null,
     };
 
     const handleSocialClick = (e, platform, handle) => {
@@ -57,6 +60,8 @@ export function ListingCard({ listing, layout = "grid" }) {
         let url = handle;
         if (platform === 'whatsapp' && !url.startsWith('http') && !url.includes('wa.me')) {
             url = `https://wa.me/${handle.replace(/\D/g, '')}`;
+        } else if (platform === 'email') {
+            url = `mailto:${handle}`;
         } else if (!url.startsWith('http')) {
             if (platform === 'instagram') url = `https://instagram.com/${handle.replace('@', '')}`;
             else if (platform === 'facebook') url = `https://facebook.com/${handle}`;
@@ -184,6 +189,16 @@ export function ListingCard({ listing, layout = "grid" }) {
                                 className="w-5.5 h-5.5 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-all shadow-sm"
                             >
                                 <FaWhatsapp className="w-3 h-3" />
+                            </button>
+                        )}
+
+                        {normalizedSocials.email && (
+                            <button
+                                onClick={(e) => handleSocialClick(e, 'email', normalizedSocials.email)}
+                                className="w-5.5 h-5.5 rounded-full bg-red-100 text-[#EA4335] flex items-center justify-center hover:scale-110 transition-all shadow-sm"
+                                title="Gmail"
+                            >
+                                <SiGmail className="w-3 h-3" />
                             </button>
                         )}
 

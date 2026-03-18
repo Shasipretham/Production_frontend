@@ -851,7 +851,7 @@ export const hostApi = createApi({
             query: (data) => ({
                 url: "wishlist/add",
                 method: "POST",
-                body: { item_type: data.type, item_id: Number(data.id) }
+                body: { item_type: data.type, item_id: data.id }
             }),
             invalidatesTags: (result, error, { type, id }) => [
                 "Wishlist",
@@ -874,7 +874,7 @@ export const hostApi = createApi({
             query: (data) => ({
                 url: "wishlist/toggle",
                 method: "POST",
-                body: { item_type: data.type, item_id: Number(data.id) }
+                body: { item_type: data.type, item_id: data.id }
             }),
             invalidatesTags: (result, error, { type, id }) => [
                 "Wishlist",
