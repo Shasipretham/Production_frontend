@@ -257,32 +257,30 @@ export const useHostEvent = () => {
             let currentId = eventId
 
             if (!currentId) {
-                const draftResponse = await hostEventService.createDraft({
+                // Backend createEventDraftSchema expects: title, type, start_date, start_time, end_date, end_time
+                const draftPayload = {
                     title: formData.title,
+                    type: formData.event_type,
                     start_date: formData.date,
-                    start_time: formData.time,
-                    event_type: formData.event_type,
-                    event_mode: formData.event_mode
-                })
+                    start_time: formData.time
+                }
+                if (formData.end_date) draftPayload.end_date = formData.end_date
+                if (formData.end_time) draftPayload.end_time = formData.end_time
+
+                const draftResponse = await hostEventService.createDraft(draftPayload)
                 currentId = draftResponse?.eventId || draftResponse?.id || draftResponse?._id || draftResponse?.event?.id || draftResponse?.event?._id || draftResponse?.data?.id || draftResponse?.data?._id
                 if (!currentId) throw new Error("Failed to create event draft")
                 setEventId(currentId)
             }
 
+            // Backend eventBasicInfoSchema expects: title, description, type, event_type
             await hostEventService.updateBasicInfo(currentId, {
                 title: formData.title,
                 description: formData.description,
-                event_type: formData.event_type,
-                event_mode: formData.event_mode,
-                start_date: formData.date,
-                end_date: formData.end_date,
-                start_time: formData.time,
-                end_time: formData.end_time,
-                event_url: formData.event_url,
-                online_instructions: formData.online_instructions,
-                phone: `${formData.phoneCode}${formData.phone}`
+                type: formData.event_type
             })
 
+            // Backend eventLocationSchema expects: country, state, city, street_address, landmark, zip_code
             if (formData.event_mode !== 'online') {
                 await hostEventService.updateLocation(currentId, {
                     country: formData.country,
@@ -292,14 +290,36 @@ export const useHostEvent = () => {
                     street_address: formData.location,
                     landmark: formData.landmark
                 })
-                await hostEventService.updateVenue(currentId, {
-                    venue_name: formData.venue_name,
-                    venue_description: formData.venue_description,
-                    parking_info: formData.parking_info,
-                    accessibility_info: formData.accessibility_info,
-                    what_is_included: formData.what_is_included,
-                    what_is_not_included: formData.what_is_not_included
-                })
+            }
+
+            // Backend eventVenueSchema expects: venue_name, venue_description, parking_info, accessibility_info,
+            // event_mode, event_url, online_instructions, included_items, latitude, longitude, google_maps_url
+            // ALWAYS call updateVenue — this is where event_mode gets saved
+            const venuePayload = {
+                event_mode: formData.event_mode,
+                event_url: formData.event_url,
+                online_instructions: formData.online_instructions
+            }
+            if (formData.event_mode !== 'online') {
+                venuePayload.venue_name = formData.venue_name
+                venuePayload.venue_description = formData.venue_description
+                venuePayload.parking_info = formData.parking_info
+                venuePayload.accessibility_info = formData.accessibility_info
+            }
+            // Convert comma-separated string to array for included_items
+            if (formData.what_is_included) {
+                venuePayload.included_items = typeof formData.what_is_included === 'string'
+                    ? formData.what_is_included.split(',').map(s => s.trim()).filter(Boolean)
+                    : formData.what_is_included
+            }
+            await hostEventService.updateVenue(currentId, venuePayload)
+
+            // Backend eventScheduleSchema expects: end_date, end_time, schedule
+            if (formData.end_date || formData.end_time || formData.schedule?.length > 0) {
+                const schedulePayload = { schedule: formData.schedule || [] }
+                if (formData.end_date) schedulePayload.end_date = formData.end_date
+                if (formData.end_time) schedulePayload.end_time = formData.end_time
+                await hostEventService.updateSchedule(currentId, schedulePayload)
             }
 
             return currentId
@@ -353,7 +373,8 @@ export const useHostEvent = () => {
                 )
             }
 
-            await hostEventService.updatePricing(currentId, formData.price)
+            // Backend eventPricingSchema expects: price (Number, min 0)
+            await hostEventService.updatePricing(currentId, Number(formData.price) || 0)
             await hostEventService.submitEvent(currentId)
             setIsSuccess(true)
         } catch (err) {

@@ -81,8 +81,8 @@ export const hostEventService = {
     updateVenue: async (id, data) => {
         return apiCall(`/events/venue/${id}`, "PUT", data)
     },
-    updateSchedule: async (id, schedule) => {
-        return apiCall(`/events/schedule/${id}`, "PUT", { schedule })
+    updateSchedule: async (id, data) => {
+        return apiCall(`/events/schedule/${id}`, "PUT", data)
     },
     updatePricing: async (id, price) => {
         return apiCall(`/events/pricing/${id}`, "PUT", { price })
