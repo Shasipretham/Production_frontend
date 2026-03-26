@@ -191,7 +191,7 @@ export function StepPricing({ formData, setFormData, contributionType = 'propert
                         <div className="bg-black/20 rounded-xl p-4 border border-white/10 flex items-center gap-4 animate-in fade-in slide-in-from-top-2">
                             <div className="bg-white/10 p-3 rounded-lg"><Ticket className="h-6 w-6 text-yellow-400" /></div>
                             <div className="flex-1">
-                                <label className="text-sm font-bold block">Ticket Price</label>
+                                <label className="text-sm font-bold block">Ticket Price <span className="text-red-500 ml-1">*</span></label>
                                 <div className="flex items-center gap-2 mt-1">
                                     <span className="text-xl font-bold text-accent min-w-[20px] text-center">{displaySymbol}</span>
                                     <input
@@ -273,7 +273,7 @@ export function StepPricing({ formData, setFormData, contributionType = 'propert
                 <div className="bg-black/20 rounded-xl p-4 border border-white/10 flex items-center gap-4">
                     <div className="bg-white/10 p-3 rounded-lg"><DollarSign className="h-6 w-6 text-yellow-400" /></div>
                     <div className="flex-1">
-                        <label className="text-sm font-bold block">Price Per Month</label>
+                        <label className="text-sm font-bold block">Price Per Month <span className="text-red-500 ml-1">*</span></label>
                         <div className="flex items-center gap-2">
                             <span className="text-lg font-bold text-gray-500 min-w-[20px] text-center">{displaySymbol}</span>
                             <input

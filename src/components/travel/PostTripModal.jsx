@@ -302,7 +302,7 @@ export default function PostTripModal({ onClose, onAdd }) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Age</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Age <span className="text-red-500 ml-1">*</span></label>
                                             <input
                                                 name="age"
                                                 type="number"
@@ -315,7 +315,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Languages (comma separated)</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Languages (comma separated) <span className="text-red-500 ml-1">*</span></label>
                                             <input
                                                 name="languages"
                                                 placeholder="e.g., English, Hindi, Spanish"
@@ -353,7 +353,7 @@ export default function PostTripModal({ onClose, onAdd }) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Airline</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Airline <span className="text-red-500 ml-1">*</span></label>
                                             <input
                                                 name="airline"
                                                 placeholder="Enter airline name"
@@ -364,7 +364,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Flight Number</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Flight Number <span className="text-red-500 ml-1">*</span></label>
                                             <input
                                                 name="flight_number"
                                                 placeholder="Enter flight number (e.g., AF226)"
@@ -375,7 +375,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Number of Travelers</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Number of Travelers <span className="text-red-500 ml-1">*</span></label>
                                             <input
                                                 name="travelers_count"
                                                 type="number"
@@ -402,6 +402,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                                 value={form.from_country}
                                                 onChange={handleFromCountryChange}
                                                 error={formErrors.from_country}
+                                                required={true}
                                             />
                                             <SearchableDropdown
                                                 label="State"
@@ -421,6 +422,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                                 isLoading={!fromCitiesList.length && selectedFromState}
                                                 onChange={handleFromCityChange}
                                                 error={formErrors.from_city}
+                                                required={true}
                                             />
                                         </div>
                                     </div>
@@ -438,6 +440,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                                 value={form.to_country}
                                                 onChange={handleToCountryChange}
                                                 error={formErrors.to_country}
+                                                required={true}
                                             />
                                             <SearchableDropdown
                                                 label="State"
@@ -457,13 +460,14 @@ export default function PostTripModal({ onClose, onAdd }) {
                                                 isLoading={!toCitiesList.length && selectedToState}
                                                 onChange={handleToCityChange}
                                                 error={formErrors.to_city}
+                                                required={true}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Departure Date & Time</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Departure Date & Time <span className="text-red-500 ml-1">*</span></label>
                                             <div className="flex gap-2">
                                                 <input
                                                     name="travel_date"

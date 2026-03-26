@@ -78,7 +78,7 @@ const Signup = () => {
 
         } catch (error) {
             console.error("Verification Error:", error);
-            alert(error?.data?.message || "Invalid OTP or Verification Failed.");
+            alert(error?.data?.message || "Wrong OTP. Please try again.");
         }
     };
 

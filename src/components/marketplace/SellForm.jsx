@@ -84,9 +84,9 @@ const Select = ({ id, value, onChange, children }) => (
   </select>
 );
 
-const Label = ({ htmlFor, children }) => (
+const Label = ({ htmlFor, required = true, children }) => (
   <label htmlFor={htmlFor} className="text-sm font-medium text-gray-900">
-    {children}
+    {children} {required && <span className="text-red-500 ml-1">*</span>}
   </label>
 );
 
@@ -314,7 +314,24 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
   /* ================= IMAGE HANDLERS ================= */
 
   const addFiles = (files) => {
-    const valid = Array.from(files).filter((f) => f instanceof File);
+    const valid = [];
+    const oversized = [];
+    Array.from(files).forEach((f) => {
+      if (f instanceof File) {
+        if (f.size > 10 * 1024 * 1024) {
+          oversized.push(f.name);
+        } else {
+          valid.push(f);
+        }
+      }
+    });
+
+    if (oversized.length > 0) {
+      setValidationError(`Some files are too large (Max 10MB): ${oversized.join(', ')}`);
+    } else {
+      setValidationError("");
+    }
+    
     setImages((prev) => [...prev, ...valid]);
   };
 

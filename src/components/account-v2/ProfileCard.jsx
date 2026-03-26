@@ -20,8 +20,8 @@ export const ProfileCard = ({ user, onUpdate, isLoading }) => {
       return;
     }
 
-    if (selected.size > 5 * 1024 * 1024) {
-      alert("Image must be under 5MB");
+    if (selected.size > 10 * 1024 * 1024) {
+      alert("Image must be under 10MB");
       return;
     }
 

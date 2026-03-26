@@ -51,6 +51,15 @@ const HostVerification = () => {
   // File handling
   const handleFileChange = (e, fieldName, isMultiple = false) => {
     const files = e.target.files;
+    
+    // Check file sizes
+    const oversized = Array.from(files).filter(f => f.size > 10 * 1024 * 1024);
+    if (oversized.length > 0) {
+      alert("Please upload files smaller than 10MB.");
+      e.target.value = "";
+      return;
+    }
+
     if (isMultiple && fieldName === 'images') {
       const newImages = Array.from(files).map(file => ({
         url: URL.createObjectURL(file),

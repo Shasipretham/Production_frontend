@@ -8,7 +8,7 @@ export function StepMedia({ formData, setFormData, handleFileChange, removeArray
 
             {/* Images */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Property Photos (At least 1)</label>
+                <label className="text-sm font-medium text-gray-300">Property Photos <span className="text-red-500 ml-1">*</span></label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {formData.images.map((img, idx) => (
                         <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-white/10">
@@ -58,7 +58,7 @@ export function StepMedia({ formData, setFormData, handleFileChange, removeArray
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Ownership Proof (Required) *</label>
+                    <label className="text-sm font-medium text-gray-300">Ownership Proof <span className="text-red-500 ml-1">*</span></label>
                     <div className={`border-2 border-dashed rounded-xl p-6 text-center hover:bg-white/5 transition-colors cursor-pointer relative flex flex-col items-center justify-center h-32 ${!formData.propertyProof ? 'border-red-500/50 bg-red-500/5' : 'border-white/20'}`}>
                         {formData.propertyProof ? (
                             <div className="text-green-400 flex flex-col items-center">

@@ -390,14 +390,22 @@ export function useHostCreation() {
 
     const handleFileChange = (e, field, multiple = false) => {
         const files = Array.from(e.target.files);
+        
+        const validFiles = files.filter(f => f.size <= 10 * 1024 * 1024);
+        if (validFiles.length < files.length) {
+            toast.error(multiple ? "Some files exceed the 10MB limit and were skipped." : "File exceeds the 10MB limit.");
+        }
+        
+        if (validFiles.length === 0) return;
+
         if (multiple) {
-            const newImages = files.map(file => ({
+            const newImages = validFiles.map(file => ({
                 file,
                 url: URL.createObjectURL(file)
             }));
             setFormData(prev => ({ ...prev, [field]: [...prev[field], ...newImages] }));
         } else {
-            setFormData(prev => ({ ...prev, [field]: files[0] }));
+            setFormData(prev => ({ ...prev, [field]: validFiles[0] }));
         }
     };
 

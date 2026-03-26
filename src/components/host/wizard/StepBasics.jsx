@@ -12,7 +12,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
             {/* Title & Description */}
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Property Title</label>
+                    <label className="text-sm font-medium text-gray-300">Property Title <span className="text-red-500 ml-1">*</span></label>
                     <div className="relative">
                         <Quote className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
@@ -26,7 +26,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Description</label>
+                    <label className="text-sm font-medium text-gray-300">Description <span className="text-red-500 ml-1">*</span></label>
                     <div className="relative">
                         <Layout className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
                         <textarea
@@ -41,7 +41,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
 
             {/* Category Selection */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Category</label>
+                <label className="text-sm font-medium text-gray-300">Category <span className="text-red-500 ml-1">*</span></label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {categories.map(cat => (
                         <button
@@ -64,7 +64,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                     <div className="flex items-center gap-2 text-gray-400 mb-2">
                         <Users className="h-4 w-4" />
-                        <span className="text-xs">Guests</span>
+                        <span className="text-xs">Guests <span className="text-red-500 ml-1">*</span></span>
                     </div>
                     <input
                         type="number"
@@ -77,7 +77,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                     <div className="flex items-center gap-2 text-gray-400 mb-2">
                         <Bed className="h-4 w-4" />
-                        <span className="text-xs">Bedrooms</span>
+                        <span className="text-xs">Bedrooms <span className="text-red-500 ml-1">*</span></span>
                     </div>
                     <input
                         type="number"
@@ -90,7 +90,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                     <div className="flex items-center gap-2 text-gray-400 mb-2">
                         <Bath className="h-4 w-4" />
-                        <span className="text-xs">Bathrooms</span>
+                        <span className="text-xs">Bathrooms <span className="text-red-500 ml-1">*</span></span>
                     </div>
                     <input
                         type="number"
@@ -103,7 +103,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                     <div className="flex items-center gap-2 text-gray-400 mb-2">
                         <Sparkles className="h-4 w-4" />
-                        <span className="text-xs">Sq Ft</span>
+                        <span className="text-xs">Sq Ft <span className="text-red-500 ml-1">*</span></span>
                     </div>
                     <input
                         type="number"
@@ -118,7 +118,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
             {/* Property Type & Privacy */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Property Type</label>
+                    <label className="text-sm font-medium text-gray-300">Property Type <span className="text-red-500 ml-1">*</span></label>
                     <div className="relative">
                         <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
@@ -132,7 +132,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Privacy Type</label>
+                    <label className="text-sm font-medium text-gray-300">Privacy Type <span className="text-red-500 ml-1">*</span></label>
                     <div className="relative">
                         {/* Using a simple select for now, can be upgraded to custom UI */}
                         <select
@@ -152,7 +152,7 @@ export function StepBasics({ formData, setFormData, categories, isEdit }) {
             <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-2">
                 <div className="flex items-center gap-2 mb-2">
                     <Sparkles className="h-5 w-5 text-yellow-400" />
-                    <label className="text-sm font-bold text-white">Pets Allowed</label>
+                    <label className="text-sm font-bold text-white">Pets Allowed <span className="text-red-500 ml-1">*</span></label>
                 </div>
                 <div className="relative">
                     <input

@@ -118,6 +118,12 @@ const CommunityDetailsForm = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error("Image size must be less than 10MB");
+            e.target.value = "";
+            return;
+        }
+
         if (type === 'avatar') {
             setAvatar(file);
             setAvatarPreview(URL.createObjectURL(file));
@@ -366,6 +372,7 @@ const CommunityDetailsForm = () => {
                             placeholder="Select Country"
                             options={countriesList}
                             value={formData.country}
+                            required={true}
                             onChange={(option) => {
                                 updateFormData('country', option.name);
                                 updateFormData('state', '');
@@ -384,6 +391,7 @@ const CommunityDetailsForm = () => {
                             value={formData.state}
                             disabled={!formData.country}
                             isLoading={!statesList.length && formData.country}
+                            required={true}
                             onChange={(option) => {
                                 updateFormData('state', option.name);
                                 updateFormData('city', '');
@@ -403,6 +411,7 @@ const CommunityDetailsForm = () => {
                             value={formData.city}
                             disabled={!formData.state}
                             isLoading={!citiesList.length && formData.state}
+                            required={true}
                             onChange={(option) => {
                                 updateFormData('city', option.name);
                             }}

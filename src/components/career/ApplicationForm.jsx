@@ -16,8 +16,8 @@ export const ApplicationForm = ({ jobId, jobTitle, onSuccess, onCancel }) => {
         const file = e.target.files[0];
         if (file) {
             // Basic validation
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                toast.error("File size must be less than 5MB");
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                toast.error("File size must be less than 10MB");
                 return;
             }
             const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -178,7 +178,7 @@ export const ApplicationForm = ({ jobId, jobTitle, onSuccess, onCancel }) => {
                                 <Upload className="w-6 h-6 text-blue-600" />
                             </div>
                             <p className="text-sm font-medium text-gray-900 mb-1">Click to upload or drag and drop</p>
-                            <p className="text-xs text-gray-500">PDF, DOC, DOCX (Max 5MB)</p>
+                            <p className="text-xs text-gray-500">PDF, DOC, DOCX (Max 10MB)</p>
                             <input
                                 type="file"
                                 accept=".pdf,.doc,.docx"

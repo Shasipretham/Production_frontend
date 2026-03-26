@@ -55,7 +55,7 @@ const Signin = () => {
       toast.success("Signed in successfully");
       navigate("/");
     } catch (error) {
-      toast.error("Login failed. Please check your OTP.");
+      toast.error(error?.data?.message || "Login failed. Please check your OTP.");
     }
   };
 

@@ -415,6 +415,10 @@ export default function GroupDetailsPage() {
             if (resourceForm.resource_type === 'link') {
                 formData.append("resource_value", resourceForm.resource_value);
             } else if (resourceForm.file) {
+                if (resourceForm.file.size > 10 * 1024 * 1024) {
+                    toast.error("File size must be less than 10MB");
+                    return;
+                }
                 formData.append("file", resourceForm.file);
             }
 
@@ -501,7 +505,19 @@ export default function GroupDetailsPage() {
                                                                 if (e.target.files?.length) {
                                                                     const dt = new DataTransfer();
                                                                     Array.from(postMedia || []).forEach(f => dt.items.add(f));
-                                                                    Array.from(e.target.files).forEach(f => dt.items.add(f));
+                                                                    
+                                                                    let hasOversized = false;
+                                                                    Array.from(e.target.files).forEach(f => {
+                                                                        if (f.size > 10 * 1024 * 1024) {
+                                                                            hasOversized = true;
+                                                                        } else {
+                                                                            dt.items.add(f);
+                                                                        }
+                                                                    });
+
+                                                                    if (hasOversized) {
+                                                                        toast.error("Some files exceed the 10MB limit and were skipped.");
+                                                                    }
 
                                                                     if (dt.files.length > 5) {
                                                                         toast.error("You can only upload up to 5 media files");

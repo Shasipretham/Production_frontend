@@ -20,7 +20,7 @@ export function StepIdentity({
 
             {/* Email Verification */}
             <div className="bg-black/20 p-6 rounded-2xl border border-white/10 space-y-4">
-                <label className="text-sm font-medium text-gray-300 block">Email Address (Required)</label>
+                <label className="text-sm font-medium text-gray-300 block">Email Address <span className="text-red-500 ml-1">*</span></label>
                 <div className="flex gap-2">
                     <div className="relative flex-1">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -54,7 +54,7 @@ export function StepIdentity({
             {/* Personal Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Full Name</label>
+                    <label className="text-sm font-medium text-gray-300">Full Name <span className="text-red-500 ml-1">*</span></label>
                     <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
@@ -67,7 +67,7 @@ export function StepIdentity({
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Phone Number</label>
+                    <label className="text-sm font-medium text-gray-300">Phone Number <span className="text-red-500 ml-1">*</span></label>
                     <div className="flex gap-2">
                         <CountryCodeSelect
                             value={formData.phoneCode || "+91"}
@@ -91,7 +91,7 @@ export function StepIdentity({
 
             {/* Address */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Current Address</label>
+                <label className="text-sm font-medium text-gray-300">Current Address <span className="text-red-500 ml-1">*</span></label>
                 <div className="relative">
                     <MapPin className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
                     <textarea
@@ -129,7 +129,7 @@ export function StepIdentity({
                 <h3 className="text-lg font-bold">Identity Documents</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">ID Type</label>
+                        <label className="text-sm font-medium text-gray-300">ID Type <span className="text-red-500 ml-1">*</span></label>
                         <select
                             className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 focus:border-accent outline-none text-gray-300"
                             value={formData.idType}
@@ -141,7 +141,7 @@ export function StepIdentity({
                         </select>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">ID Number</label>
+                        <label className="text-sm font-medium text-gray-300">ID Number <span className="text-red-500 ml-1">*</span></label>
                         <input
                             type="text"
                             placeholder="ID Number"
@@ -154,7 +154,7 @@ export function StepIdentity({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">Upload ID Document *</label>
+                        <label className="text-sm font-medium text-gray-300">Upload ID Document <span className="text-red-500 ml-1">*</span></label>
                         <div className={`border-2 border-dashed rounded-xl p-6 text-center hover:bg-white/5 transition-colors cursor-pointer relative flex flex-col items-center justify-center h-32 ${!formData.idProof ? 'border-red-500/50 bg-red-500/5' : 'border-white/20'}`}>
                             {formData.idProof ? (
                                 <div className="text-green-400 flex flex-col items-center">
@@ -171,7 +171,7 @@ export function StepIdentity({
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300">Your Selfie (Required) *</label>
+                        <label className="text-sm font-medium text-gray-300">Your Selfie <span className="text-red-500 ml-1">*</span></label>
                         <div className={`border-2 border-dashed rounded-xl p-6 text-center hover:bg-white/5 transition-colors cursor-pointer relative flex flex-col items-center justify-center h-32 ${!formData.profilePhoto ? 'border-red-500/50 bg-red-500/5' : 'border-white/20'}`}>
                             {formData.profilePhoto ? (
                                 <div className="text-green-400 flex flex-col items-center">

@@ -82,7 +82,7 @@ export function StepLocation({ formData, setFormData }) {
 
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Street Address</label>
+                    <label className="text-sm font-medium text-gray-300">Street Address <span className="text-red-500 ml-1">*</span></label>
                     <div className="relative">
                         <Navigation className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
                         <textarea
@@ -100,6 +100,7 @@ export function StepLocation({ formData, setFormData }) {
                         placeholder="Select Country"
                         className="col-span-2 shadow-none"
                         options={countriesList}
+                        required={true}
                         value={formData.country?.name || formData.country}
                         onChange={(country) => {
                             setFormData({
@@ -117,6 +118,7 @@ export function StepLocation({ formData, setFormData }) {
                         label="State"
                         placeholder="Select State"
                         options={statesList}
+                        required={true}
                         value={formData.state}
                         disabled={!formData.country}
                         isLoading={!statesList.length && formData.country}
@@ -137,6 +139,7 @@ export function StepLocation({ formData, setFormData }) {
                         label="City"
                         placeholder="Select City"
                         options={citiesList}
+                        required={true}
                         value={formData.city}
                         disabled={!formData.state}
                         isLoading={!citiesList.length && formData.state}
@@ -150,7 +153,7 @@ export function StepLocation({ formData, setFormData }) {
 
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-300 flex justify-between">
-                            Pincode
+                            <span>Pincode <span className="text-red-500 ml-1">*</span></span>
                             {isPincodeLoading && <Loader2 className="h-4 w-4 animate-spin text-accent" />}
                         </label>
                         <input

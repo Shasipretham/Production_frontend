@@ -169,9 +169,9 @@ export const useHostEvent = () => {
     }, [])
 
     const validateFile = (file) => {
-        const MAX_FILE_SIZE = 5 * 1024 * 1024
+        const MAX_FILE_SIZE = 10 * 1024 * 1024
         if (!file.type.match('image.*')) return { valid: false, error: "Please upload an image file" }
-        if (file.size > MAX_FILE_SIZE) return { valid: false, error: "File is too large (max 5MB)" }
+        if (file.size > MAX_FILE_SIZE) return { valid: false, error: "File is too large (max 10MB)" }
         return { valid: true }
     }
 

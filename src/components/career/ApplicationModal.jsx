@@ -113,7 +113,7 @@ export function ApplicationModal({ job, isOpen, onClose }) {
                                             />
                                             <Upload className="w-8 h-8 text-gray-400 mx-auto mb-3 group-hover:text-[#7B2CBF] transition-colors" />
                                             <p className="text-sm text-gray-300">Drag and drop your resume here, or click to browse</p>
-                                            <p className="text-xs text-gray-500 mt-1">PDF, DOCX up to 5MB</p>
+                                            <p className="text-xs text-gray-500 mt-1">PDF, DOCX up to 10MB</p>
                                         </div>
                                     </div>
 
