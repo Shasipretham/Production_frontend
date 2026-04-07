@@ -10,6 +10,8 @@ import {
   Mail,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
+import { useCountry } from "@/context/CountryContext";
 
 import {
   useGetBuySellListingsQuery,
@@ -20,6 +22,7 @@ import {
 
 const EssentialsBundle = () => {
   const navigate = useNavigate();
+  const { formatPrice } = useCountry();
 
   /* ===================== API ===================== */
 
@@ -112,7 +115,7 @@ const EssentialsBundle = () => {
                   </h4>
 
                   <p className="text-indigo-600 font-bold text-sm">
-                    ₹{item.price}
+                    {formatPrice(item.price || 0)}
                   </p>
 
                   {(item.location?.city || item.location?.state) && (
@@ -150,7 +153,7 @@ const EssentialsBundle = () => {
               />
 
               <p className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">
-                ₹{selectedItem.price}
+                {formatPrice(selectedItem.price || 0)}
               </p>
 
               <p className="text-gray-600 text-sm sm:text-base mb-4">
@@ -181,9 +184,9 @@ const EssentialsBundle = () => {
                 {selectedItem.seller?.email && (
                   <a
                     href={`mailto:${selectedItem.seller.email}`}
-                    className="flex items-center gap-2 border px-3 sm:px-4 py-2 rounded text-sm"
+                    className="flex items-center gap-2 border px-3 sm:px-4 py-2 rounded text-sm text-[#EA4335] hover:bg-red-50 transition-colors"
                   >
-                    <Mail size={16} /> Email
+                    <SiGmail size={16} /> Gmail
                   </a>
                 )}
               </div>

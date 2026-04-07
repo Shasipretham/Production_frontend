@@ -73,7 +73,8 @@ export default function SearchPage() {
                             instagram: rawHost.instagram || property.instagram || "",
                             facebook: rawHost.facebook || property.facebook || "",
                             whatsapp: rawHost.whatsapp || property.whatsapp || rawHost.phone || property.phone || "",
-                            twitter: rawHost.twitter || rawHost.x || property.twitter || property.x || ""
+                            twitter: rawHost.twitter || rawHost.x || property.twitter || property.x || "",
+                            email: rawHost.email || rawHost.User?.email || property.email || ""
                         };
 
                         return {
@@ -251,7 +252,7 @@ export default function SearchPage() {
                                 <p className="text-gray-500">Try adjusting your filters or search for a different location.</p>
                                 <Button
                                     variant="link"
-                                    onClick={() => navigate('/')}
+                                    onClick={() => setSearchParams({})}
                                     className="mt-4 text-primary font-bold"
                                 >
                                     Clear all filters

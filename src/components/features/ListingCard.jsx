@@ -186,7 +186,7 @@ export function ListingCard({ listing, layout = "grid" }) {
                         {normalizedSocials.whatsapp && (
                             <button
                                 onClick={(e) => handleSocialClick(e, 'whatsapp', normalizedSocials.whatsapp)}
-                                className="w-5.5 h-5.5 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-all shadow-sm"
+                                className="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-all shadow-sm"
                             >
                                 <FaWhatsapp className="w-3 h-3" />
                             </button>
@@ -195,7 +195,7 @@ export function ListingCard({ listing, layout = "grid" }) {
                         {normalizedSocials.email && (
                             <button
                                 onClick={(e) => handleSocialClick(e, 'email', normalizedSocials.email)}
-                                className="w-5.5 h-5.5 rounded-full bg-red-100 text-[#EA4335] flex items-center justify-center hover:scale-110 transition-all shadow-sm"
+                                className="w-6 h-6 rounded-full bg-red-100 text-[#EA4335] flex items-center justify-center hover:scale-110 transition-all shadow-sm"
                                 title="Gmail"
                             >
                                 <SiGmail className="w-3 h-3" />

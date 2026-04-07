@@ -40,7 +40,7 @@ export function Footer() {
     ];
 
     return (
-        <footer className="bg-navy-dark text-white font-sans pt-10 sm:pt-12 md:pt-16 pb-6 sm:pb-8 border-t border-white/5">
+        <footer className="bg-navy-dark text-white font-sans pt-10 sm:pt-12 md:pt-16 pb-24 lg:pb-8 border-t border-white/5">
             <div className="container mx-auto px-4 sm:px-6">
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-12 md:mb-16">

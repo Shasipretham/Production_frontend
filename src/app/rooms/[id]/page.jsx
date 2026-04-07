@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
 
 const normalizeSocialUrl = (platform, value) => {
     if (!value) return null;
@@ -111,6 +112,7 @@ export default function RoomPage() {
             whatsapp: sourceHost.whatsapp || sourceHost.phone || sourceUser.phone,
             instagram: sourceHost.instagram,
             facebook: sourceHost.facebook,
+            email: sourceHost.email || sourceUser.email || "",
         };
 
         const amenities = Array.isArray(p.amenities) ? p.amenities : [];
@@ -417,9 +419,19 @@ export default function RoomPage() {
                                         <FaWhatsapp className="w-5 h-5" />
                                     </button>
                                 )}
+                                {listing.host.socials.email && (
+                                    <button onClick={() => { window.open(`mailto:${listing.host.socials.email}`, '_blank'); }} className="w-10 h-10 flex items-center justify-center rounded-full bg-red-50 text-[#EA4335] hover:bg-red-100 transition-colors" title="Gmail">
+                                        <SiGmail className="w-4.5 h-4.5" />
+                                    </button>
+                                )}
                                 {listing.host.socials.instagram && (
                                     <button onClick={() => handleSocialClick('instagram', listing.host.socials.instagram)} className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-50 text-pink-600 hover:bg-pink-100 transition-colors">
                                         <Instagram className="w-5 h-5" />
+                                    </button>
+                                )}
+                                {listing.host.socials.facebook && (
+                                    <button onClick={() => handleSocialClick('facebook', listing.host.socials.facebook)} className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 text-[#1877F2] hover:bg-blue-100 transition-colors" title="Facebook">
+                                        <Facebook className="w-5 h-5" />
                                     </button>
                                 )}
                             </div>

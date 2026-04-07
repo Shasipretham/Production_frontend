@@ -106,6 +106,9 @@ export const PropertyCard = ({ property }) => {
             email:
                 property.Host?.email ||
                 property.host?.email ||
+                property.Host?.User?.email ||
+                property.host?.User?.email ||
+                property.creator?.email ||
                 property.email ||
                 ""
         }

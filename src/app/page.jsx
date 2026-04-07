@@ -36,13 +36,8 @@ export default function Home() {
       {/* Unified Content (Responsive) */}
       <HomeFeatured filters={homeFilters} />
 
-      {/* Footer (Desktop Only - Mobile has nav bar spacer) */}
-      <div className="hidden lg:block">
-        <Footer />
-      </div>
-
-      {/* Mobile Bottom Spacing for Fixed Nav */}
-      <div className="lg:hidden h-20" />
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }
