@@ -34,8 +34,8 @@ export const Sidebar = memo(({ event }) => {
     };
 
     return (
-        <aside className="space-y-6 sticky top-24">
-            <div className="bg-white rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100">
+        <aside className="space-y-6 md:sticky md:top-24">
+            <div className="bg-white rounded-3xl shadow-xl p-6 md:hover:shadow-2xl transition-all duration-300 md:hover:scale-105 border border-gray-100">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="relative">
                         <div className="w-20 h-20 bg-accent rounded-full overflow-hidden shadow-lg">
@@ -77,7 +77,7 @@ export const Sidebar = memo(({ event }) => {
                     Contact Host
                 </Button>
             </div>
-            <div className="bg-white rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl p-6 md:hover:shadow-2xl transition-all duration-300 md:hover:scale-105 border border-gray-100">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Users className="h-5 w-5 text-accent" />
                     Who's Going
@@ -109,7 +109,7 @@ export const Sidebar = memo(({ event }) => {
                     Invite Friends
                 </Button>
             </div>
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden md:hover:shadow-2xl transition-all duration-300 md:hover:scale-105 border border-gray-100">
                 <div className={`relative h-48 ${event.event_mode === 'online' ? 'bg-gradient-to-br from-blue-200 to-blue-300' :
                     event.event_mode === 'hybrid' ? 'bg-gradient-to-br from-purple-200 to-purple-300' :
                         'bg-gradient-to-br from-gray-200 to-gray-300'

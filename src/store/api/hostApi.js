@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const API_BASE_URL = import.meta.env.PROD
-    ? "https://api.nextkinlife.live"
+    ? 
+    // "https://api.nextkinlife.live"
+    "http://localhost:5000/api"
     : "/api";
 
 const rawBase = fetchBaseQuery({
@@ -794,7 +796,12 @@ export const hostApi = createApi({
             providesTags: ["Notification"],
             transformResponse: (response) => {
                 const items = response?.notifications || response?.data || response || [];
-                return Array.isArray(items) ? items : [];
+                if (!Array.isArray(items)) return [];
+                return items.map(n => ({
+                    ...n,
+                    id: n.id || n._id,
+                    is_read: n.is_read !== undefined ? n.is_read : n.read
+                }));
             },
         }),
 
@@ -817,7 +824,7 @@ export const hostApi = createApi({
         // Delete single notification
         deleteNotification: builder.mutation({
             query: (id) => ({
-                url: `notification/notifications/${id}`,
+                url: `notification/delete/${id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Notification"],
@@ -826,7 +833,7 @@ export const hostApi = createApi({
         // Delete all notifications
         deleteAllNotifications: builder.mutation({
             query: () => ({
-                url: "notification/notifications",
+                url: "notification/delete-all",
                 method: "DELETE",
             }),
             invalidatesTags: ["Notification"],

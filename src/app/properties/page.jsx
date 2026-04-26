@@ -6,8 +6,14 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useCountry } from "@/context/CountryContext";
 import { usePagination } from "@/hooks/usePagination";
 import { Pagination } from "@/components/ui/Pagination";
+import { FilterSidebar } from "@/components/FilterSidebar";
 
 export default function PropertiesListPage() {
+
+  const [filters, setFilters] = useState({
+  category: []
+});
+const [sortBy, setSortBy] = useState("default");
   const location = useLocation();
   const qs = new URLSearchParams(location.search);
   const view = qs.get("view") || "all"; // recommended | related | all
@@ -30,16 +36,19 @@ export default function PropertiesListPage() {
       title: p.title ?? `Property #${p.id ?? p._id}`,
       city: p.city ?? "",
       country: p.country ?? "",
+          category: p.property_type,
+
       image:
         Array.isArray(p.photos) && p.photos.length
           ? p.photos[0]
           : p.image ??
           "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070&auto=format&fit=crop",
-      price:
-        p.price_per_month ??
-        p.price_per_night ??
-        p.price_per_hour ??
-        0,
+     price: Number(
+  p.price_per_month ??
+  p.price_per_night ??
+  p.price_per_hour ??
+  0
+),
       currency: p.currency ?? "INR",
       isVerified: (p.status ?? "").toLowerCase() === "approved",
       raw: p,
@@ -47,12 +56,33 @@ export default function PropertiesListPage() {
   }, [properties]);
 
   // ✅ Apply view filter (recommended / related)
-  const filtered = useMemo(() => {
-    if (view === "recommended") {
-      return items.filter((it) => it.isVerified);
-    }
-    return items;
-  }, [view, items]);
+const filtered = useMemo(() => {
+  // STEP 1: filter
+  let result = items.filter((it) => {
+
+    const matchesCategory =
+      !filters.category?.length ||
+      filters.category.some(
+        (val) =>
+          val.trim().toLowerCase() ===
+          String(it.category || "").trim().toLowerCase()
+      );
+
+    const matchesView =
+      view !== "recommended" || it.isVerified;
+
+    return matchesCategory && matchesView;
+  });
+
+  // STEP 2: sort
+  if (sortBy === "priceLowHigh") {
+result = [...result].sort((a, b) => a.price - b.price);
+  } else if (sortBy === "priceHighLow") {
+result = [...result].sort((a, b) => b.price - a.price);  }
+
+  return result;
+}, [items, filters, view, sortBy]);
+  
 
   // ✅ Pagination
   const { currentItems, currentPage, totalPages, goToPage } = usePagination(filtered, 12);
@@ -90,6 +120,17 @@ export default function PropertiesListPage() {
               ? "Related Properties"
               : "All Properties"}
         </h1>
+       <div className="flex items-center gap-4">
+         {/* <select
+      value={sortBy}
+      onChange={(e) => setSortBy(e.target.value)}
+      className="border px-3 py-2 rounded-md text-sm"
+    >
+      <option value="default">Sort</option>
+      <option value="priceLowHigh">Price: Low → High</option>
+      <option value="priceHighLow">Price: High → Low</option>
+    </select> */}
+
         <div className="text-sm text-gray-500">
           Showing{" "}
           <span className="font-semibold text-gray-700">
@@ -101,6 +142,7 @@ export default function PropertiesListPage() {
               for <b>{activeCountry.name}</b>
             </span>
           )}
+        </div>
         </div>
       </div>
 

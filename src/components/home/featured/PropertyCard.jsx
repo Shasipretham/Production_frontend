@@ -20,13 +20,25 @@ import { useCountry } from '@/context/CountryContext';
 import { toast } from 'sonner';
 import WishlistButton from '@/components/ui/WishlistButton';
 
-export const CardContainer = ({ children, linkTo, className = "" }) => (
-    <Link to={linkTo} className="group block h-full select-none focus:outline-none" aria-label="View details">
-        <div className={`bg-white rounded-[1.5rem] border border-[#E5E7EB] hover:border-[#CB2A25]/20 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col overflow-hidden relative ${className}`}>
-            {children}
+export const CardContainer = ({ children, linkTo, className = "" }) => {
+    const navigate = (e) => {
+        // Ignore clicks on buttons/icons
+        if (e.target.closest("button")) return;
+
+        window.location.href = linkTo;
+    };
+
+    return (
+        <div
+            onClick={navigate}
+            className={`group block h-full cursor-pointer select-none focus:outline-none`}
+        >
+            <div className={`bg-white rounded-[1.5rem] border border-[#E5E7EB] hover:border-[#CB2A25]/20 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col overflow-hidden relative ${className}`}>
+                {children}
+            </div>
         </div>
-    </Link>
-);
+    );
+};
 
 export const PropertyCard = ({ property }) => {
     const { formatPrice } = useCountry();
@@ -149,10 +161,9 @@ export const PropertyCard = ({ property }) => {
                     : `https://twitter.com/${value.replace(/^@/, "")}`;
                 break;
 
-            case "email":
-                if (!value) return;
-                url = `mailto:${value}`;
-                break;
+          case "email":
+    url = `https://mail.google.com/mail/?view=cm&fs=1&to=${value}`;
+    break;
 
             default:
                 return;
@@ -258,17 +269,17 @@ export const PropertyCard = ({ property }) => {
                     </div>
 
                     {/* Social Media Quick Connect (Price Section) */}
-                    <div className="flex gap-2 items-center justify-end">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center justify-end">
 
                         {propertyData.socials.whatsapp && (
                             <button
                                 onClick={(e) =>
                                     handleSocialClick(e, "whatsapp", propertyData.socials.whatsapp)
                                 }
-                                className="w-7 h-7 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition"
+                                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition"
                                 title="WhatsApp"
                             >
-                                <FaWhatsapp className="w-4 h-4" />
+                                <FaWhatsapp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             </button>
                         )}
 
@@ -277,10 +288,10 @@ export const PropertyCard = ({ property }) => {
                                 onClick={(e) =>
                                     handleSocialClick(e, "email", propertyData.socials.email)
                                 }
-                                className="w-7 h-7 rounded-full bg-red-100 text-[#EA4335] flex items-center justify-center hover:bg-[#EA4335] hover:text-white transition"
+                                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-100 text-[#EA4335] flex items-center justify-center hover:bg-[#EA4335] hover:text-white transition"
                                 title="Gmail"
                             >
-                                <SiGmail className="w-3.5 h-3.5" />
+                                <SiGmail className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             </button>
                         )}
 
@@ -289,10 +300,10 @@ export const PropertyCard = ({ property }) => {
                                 onClick={(e) =>
                                     handleSocialClick(e, "instagram", propertyData.socials.instagram)
                                 }
-                                className="w-7 h-7 rounded-full bg-gray-100 text-[#E4405F] flex items-center justify-center hover:bg-[#E4405F] hover:text-white transition"
+                                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-100 text-[#E4405F] flex items-center justify-center hover:bg-[#E4405F] hover:text-white transition"
                                 title="Instagram"
                             >
-                                <FaInstagram className="w-4 h-4" />
+                                <FaInstagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             </button>
                         )}
 
@@ -301,25 +312,22 @@ export const PropertyCard = ({ property }) => {
                                 onClick={(e) =>
                                     handleSocialClick(e, "facebook", propertyData.socials.facebook)
                                 }
-                                className="w-7 h-7 rounded-full bg-gray-100 text-[#1877F2] flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition"
+                                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-100 text-[#1877F2] flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition"
                                 title="Facebook"
                             >
-                                <FaFacebookF className="w-3.5 h-3.5" />
+                                <FaFacebookF className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             </button>
                         )}
-
-
-
 
                         {propertyData.socials.twitter && (
                             <button
                                 onClick={(e) =>
                                     handleSocialClick(e, "twitter", propertyData.socials.twitter)
                                 }
-                                className="w-7 h-7 rounded-full bg-gray-100 text-black flex items-center justify-center hover:bg-black hover:text-white transition"
+                                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-100 text-black flex items-center justify-center hover:bg-black hover:text-white transition"
                                 title="X (Twitter)"
                             >
-                                <FaXTwitter className="w-3.5 h-3.5" />
+                                <FaXTwitter className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             </button>
                         )}
 

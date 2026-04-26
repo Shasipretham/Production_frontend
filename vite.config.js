@@ -14,7 +14,7 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api/host': {
-        target: 'https://api.nextkinlife.live',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
@@ -24,7 +24,7 @@ export default defineConfig({
         },
       },
       '/api': {
-        target: 'https://api.nextkinlife.live',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
@@ -55,7 +55,7 @@ export default defineConfig({
         }
       },
       '/socket.io': {
-        target: 'https://api.nextkinlife.live',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
         ws: true,

@@ -427,23 +427,45 @@ export default function TravelPage() {
                 Connect with fellow travelers sharing your flight path. <br />
                 Safe, verified, and community-driven matching.
               </p>
-              <div className="flex gap-4">
-                <button onClick={() => setShowModal(true)} className="px-8 py-4 rounded-xl font-bold flex items-center gap-2 shadow-2xl transition-transform hover:scale-105 active:scale-95 text-white" style={{ backgroundColor: 'var(--color-accent)' }}>
-                  <Plane size={20} /> Post Your Trip
-                </button>
-                {currentUser && (
-                  <button
-                    onClick={() => setShowRequestsModal(true)}
-                    className="px-8 py-4 rounded-xl font-bold flex items-center gap-2 shadow-2xl transition-transform hover:scale-105 active:scale-95 bg-white/10 backdrop-blur-md text-white border border-white/20 relative"
-                  >
-                    <Users size={20} /> Match Requests
-                    {matches.filter(m => m.status === 'pending' && myTrips.some(t => t.id === m.matched_trip_id)).length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center animate-pulse">
-                        {matches.filter(m => m.status === 'pending' && myTrips.some(t => t.id === m.matched_trip_id)).length}
-                      </span>
-                    )}
-                  </button>
-                )}
+<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+  <button
+  onClick={() => setShowModal(true)}
+  className="
+    w-full sm:w-auto
+    px-4 py-2 text-sm 
+    sm:px-6 sm:py-3 sm:text-base 
+    md:px-8 md:py-4
+    rounded-xl font-bold flex items-center justify-center gap-2 
+    shadow-2xl transition-transform hover:scale-105 active:scale-95 text-white
+  "
+  style={{ backgroundColor: 'var(--color-accent)' }}
+>
+  <Plane className="w-4 h-4 sm:w-5 sm:h-5" />
+  <span className="truncate">Post Your Trip</span>
+</button>                 
+               {currentUser && (
+  <button
+    onClick={() => setShowRequestsModal(true)}
+    className="
+      w-full sm:w-auto
+      px-4 py-2 text-sm 
+      sm:px-6 sm:py-3 sm:text-base 
+      md:px-8 md:py-4
+      rounded-xl font-bold flex items-center justify-center gap-2 
+      shadow-2xl transition-transform hover:scale-105 active:scale-95 
+      bg-white/10 backdrop-blur-md text-white border border-white/20 relative
+    "
+  >
+    <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+    <span className="truncate">Match Requests</span>
+
+    {matches.filter(m => m.status === 'pending' && myTrips.some(t => t.id === m.matched_trip_id)).length > 0 && (
+      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center animate-pulse">
+        {matches.filter(m => m.status === 'pending' && myTrips.some(t => t.id === m.matched_trip_id)).length}
+      </span>
+    )}
+  </button>
+)}
               </div>
             </motion.div>
           </div>

@@ -715,7 +715,7 @@ export function Navbar({ minimal = false, onMenuClick }) {
                                 className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-[#0F2238] z-40 overflow-y-auto border-r border-white/10 shadow-2xl"
                                 ref={mobileMenuRef}
                             >
-                                <div className="min-h-full flex flex-col pt-20 pb-8 px-6">
+                                <div className="min-h-full flex flex-col pt-16 pb-8 px-6">
                                     {/* User Profile Section */}
                                     <div className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/5">
                                         {isAuthenticated ? (
