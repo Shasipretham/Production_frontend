@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Check,
@@ -89,6 +89,7 @@ const CommunityDetailsForm = () => {
     ));
     const [statesList, setStatesList] = useState([]);
     const [citiesList, setCitiesList] = useState([]);
+    const citiesFetched = useRef(false);
 
     useEffect(() => {
         if (formData.country) {
@@ -402,6 +403,7 @@ const CommunityDetailsForm = () => {
                                 updateFormData('city', '');
                                 setStatesList(State.getStatesOfCountry(option.isoCode));
                                 setCitiesList([]);
+                                citiesFetched.current = false;
                             }}
                             className="bg-white/5 border-white/10 text-white"
                         />
@@ -421,6 +423,9 @@ const CommunityDetailsForm = () => {
                                 const countryObj = countriesList.find(c => c.name === formData.country);
                                 if (countryObj) {
                                     setCitiesList(City.getCitiesOfState(countryObj.isoCode, option.isoCode));
+                                    citiesFetched.current = true;
+                                } else {
+                                    citiesFetched.current = false;
                                 }
                             }}
                             className="bg-white/5 border-white/10 text-white"
@@ -433,7 +438,7 @@ const CommunityDetailsForm = () => {
                             options={citiesList}
                             value={formData.city}
                             disabled={!formData.state}
-                            isLoading={!citiesList.length && formData.state}
+                            isLoading={!citiesList.length && !citiesFetched.current && formData.state}
                             required={true}
                             onChange={(option) => {
                                 updateFormData('city', option.name);

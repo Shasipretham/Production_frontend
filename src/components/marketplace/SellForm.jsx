@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Upload,
   X,
@@ -23,6 +23,7 @@ import SearchableDropdown from "@/components/ui/SearchableDropdown";
 import { COUNTRIES } from "@/lib/mock-data";
 import { CountryCodeSelect } from "@/components/ui/CountryCodeSelect";
 import { useCountry } from "@/context/CountryContext";
+import { compressImage } from "@/lib/imageUtils";
 
 /* =========================================================
    BASIC UI COMPONENTS (MUST BE ABOVE SellForm)
@@ -204,6 +205,7 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
   ));
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
+  const citiesFetched = useRef(false);
 
   // Mutations
   const [createBuySell, { isLoading: isCreating, isError: isCreateError, error: createError, isSuccess: isCreateSuccess }] = useCreateBuySellMutation();
@@ -255,6 +257,7 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
           const sObj = State.getStatesOfCountry(cObj.isoCode).find(s => s.name === initialData.state);
           if (sObj) {
             setCitiesList(City.getCitiesOfState(cObj.isoCode, sObj.isoCode));
+            citiesFetched.current = true;
           }
         }
       }
@@ -301,6 +304,7 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
           if (countryCode) setStatesList(states);
           if (countryCode && matchedState?.isoCode) {
             setCitiesList(City.getCitiesOfState(countryCode, matchedState.isoCode));
+            citiesFetched.current = true;
           }
         }
         setIsPincodeLoading(false);
@@ -383,11 +387,18 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
     appendIfExists(formData, "phone", `${phoneCode}${phone}`);
 
     formData.append("status", "active");
+    formData.append("existingImages", JSON.stringify(existingImages));
 
     // New images
-    images.forEach((img) => {
-      formData.append("galleryImages", img);
-    });
+    for (const img of images) {
+      try {
+        const compressed = await compressImage(img);
+        formData.append("galleryImages", compressed);
+      } catch (err) {
+        console.error("Failed to compress listing image, using original:", err);
+        formData.append("galleryImages", img);
+      }
+    }
 
     // Existing images to keep (if backend supports re-sending or if we just send deletions)
     // The current backend likely expects 'galleryImages' for NEW uploads.
@@ -624,47 +635,61 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
 
         {/* LOCATION & DESCRIPTION */}
         <div className="bg-white p-4 rounded-lg space-y-3">
-          <SearchableDropdown
-            label="Country"
-            placeholder="Select Country"
-            options={countriesList}
-            value={typeof country === 'string' ? country : country?.name}
-            onChange={(c) => {
-              setCountry(c);
-              setState("");
-              setCity("");
-              setStatesList(State.getStatesOfCountry(c.isoCode));
-              setCitiesList([]);
-            }}
-          />
+          {(() => {
+            const selectedCountryName = typeof country === 'string' ? country : country?.name;
+            const isValidCountry = countriesList.some(c => c.name === selectedCountryName);
+            const isValidState = statesList.some(s => s.name === state);
+            
+            return (
+              <>
+                <SearchableDropdown
+                  label="Country"
+                  placeholder="Select Country"
+                  options={countriesList}
+                  value={typeof country === 'string' ? country : country?.name}
+                  onChange={(c) => {
+                    setCountry(c);
+                    setState("");
+                    setCity("");
+                    setStatesList(State.getStatesOfCountry(c.isoCode));
+                    setCitiesList([]);
+                    citiesFetched.current = false;
+                  }}
+                />
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <SearchableDropdown
-              label="State"
-              placeholder="Select State"
-              options={statesList}
-              value={state}
-              disabled={!country}
-              isLoading={!statesList.length && country}
-              onChange={(s) => {
-                setState(s.name);
-                setCity("");
-                const cCode = country?.isoCode || countriesList.find(c => c.name === country)?.isoCode;
-                if (cCode) {
-                  setCitiesList(City.getCitiesOfState(cCode, s.isoCode));
-                }
-              }}
-            />
-            <SearchableDropdown
-              label="City"
-              placeholder="Select City"
-              options={citiesList}
-              value={city}
-              disabled={!state}
-              isLoading={!citiesList.length && state}
-              onChange={(c) => setCity(c.name)}
-            />
-          </div>
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <SearchableDropdown
+                    label="State"
+                    placeholder="Select State"
+                    options={statesList}
+                    value={state}
+                    disabled={!country}
+                    isLoading={isValidCountry && !statesList.length && country}
+                    onChange={(s) => {
+                      setState(s.name);
+                      setCity("");
+                      const cCode = country?.isoCode || countriesList.find(c => c.name === country)?.isoCode;
+                      if (cCode) {
+                        setCitiesList(City.getCitiesOfState(cCode, s.isoCode));
+                        citiesFetched.current = true;
+                      } else {
+                        citiesFetched.current = false;
+                      }
+                    }}
+                  />
+                  <SearchableDropdown
+                    label="City"
+                    placeholder="Select City"
+                    options={citiesList}
+                    value={city}
+                    disabled={!state}
+                    isLoading={isValidState && !citiesList.length && !citiesFetched.current && state}
+                    onChange={(c) => setCity(c.name)}
+                  />
+                </div>
+              </>
+            );
+          })()}
 
           <div className="flex justify-between items-center">
             <Label>Zip Code</Label>

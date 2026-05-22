@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plane, User, MapPin, Clock, Loader2 } from "lucide-react";
 import { useCreateTripMutation, useGetHostProfileQuery } from "../../store/api/hostApi";
@@ -41,12 +41,14 @@ export default function PostTripModal({ onClose, onAdd }) {
     // Origin location lists
     const [fromStatesList, setFromStatesList] = useState([]);
     const [fromCitiesList, setFromCitiesList] = useState([]);
+    const fromCitiesFetched = useRef(false);
     const [selectedFromCountry, setSelectedFromCountry] = useState(null);
     const [selectedFromState, setSelectedFromState] = useState(null);
 
     // Destination location lists
     const [toStatesList, setToStatesList] = useState([]);
     const [toCitiesList, setToCitiesList] = useState([]);
+    const toCitiesFetched = useRef(false);
     const [selectedToCountry, setSelectedToCountry] = useState(null);
     const [selectedToState, setSelectedToState] = useState(null);
 
@@ -61,6 +63,7 @@ export default function PostTripModal({ onClose, onAdd }) {
         setForm(prev => ({ ...prev, from_country: country.name, from_state: "", from_city: "" }));
         setFromStatesList(State.getStatesOfCountry(country.isoCode));
         setFromCitiesList([]);
+        fromCitiesFetched.current = false;
         setSelectedFromState(null);
     };
 
@@ -70,6 +73,7 @@ export default function PostTripModal({ onClose, onAdd }) {
         setForm(prev => ({ ...prev, from_state: state.name, from_city: "" }));
         if (selectedFromCountry) {
             setFromCitiesList(City.getCitiesOfState(selectedFromCountry.isoCode, state.isoCode));
+            fromCitiesFetched.current = true;
         }
     };
 
@@ -84,6 +88,7 @@ export default function PostTripModal({ onClose, onAdd }) {
         setForm(prev => ({ ...prev, to_country: country.name, to_state: "", to_city: "" }));
         setToStatesList(State.getStatesOfCountry(country.isoCode));
         setToCitiesList([]);
+        toCitiesFetched.current = false;
         setSelectedToState(null);
     };
 
@@ -93,6 +98,7 @@ export default function PostTripModal({ onClose, onAdd }) {
         setForm(prev => ({ ...prev, to_state: state.name, to_city: "" }));
         if (selectedToCountry) {
             setToCitiesList(City.getCitiesOfState(selectedToCountry.isoCode, state.isoCode));
+            toCitiesFetched.current = true;
         }
     };
 
@@ -419,7 +425,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                                 options={fromCitiesList}
                                                 value={form.from_city}
                                                 disabled={!selectedFromState}
-                                                isLoading={!fromCitiesList.length && selectedFromState}
+                                                isLoading={!fromCitiesList.length && !fromCitiesFetched.current && selectedFromState}
                                                 onChange={handleFromCityChange}
                                                 error={formErrors.from_city}
                                                 required={true}
@@ -457,7 +463,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                                 options={toCitiesList}
                                                 value={form.to_city}
                                                 disabled={!selectedToState}
-                                                isLoading={!toCitiesList.length && selectedToState}
+                                                isLoading={!toCitiesList.length && !toCitiesFetched.current && selectedToState}
                                                 onChange={handleToCityChange}
                                                 error={formErrors.to_city}
                                                 required={true}

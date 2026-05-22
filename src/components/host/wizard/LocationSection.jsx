@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Navigation, Globe, Loader2 } from 'lucide-react';
 import { fetchAddressByPincode } from '@/lib/pincodeUtils';
 import { Country, State, City } from 'country-state-city';
@@ -9,6 +9,7 @@ const LocationSection = ({ formData, setFormData }) => {
   const [countriesList] = useState(Country.getAllCountries());
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
+  const citiesFetched = useRef(false);
 
   // Initialize lists if data exists
   useEffect(() => {
@@ -22,6 +23,7 @@ const LocationSection = ({ formData, setFormData }) => {
           const stateObj = states.find(s => s.name === formData.state);
           if (stateObj) {
             setCitiesList(City.getCitiesOfState(countryObj.isoCode, stateObj.isoCode));
+            citiesFetched.current = true;
           }
         }
       }
@@ -32,7 +34,12 @@ const LocationSection = ({ formData, setFormData }) => {
   useEffect(() => {
     const fetchPincodeDetails = async () => {
       const pincode = formData.pincode;
-      if (pincode && pincode.length === 6 && /^\d+$/.test(pincode)) {
+      const currentCountryName = typeof formData.country === 'object'
+        ? formData.country?.name
+        : formData.country;
+      const isCountryIndiaOrEmpty = !currentCountryName || currentCountryName.toLowerCase() === "india";
+
+      if (pincode && pincode.length === 6 && /^\d+$/.test(pincode) && isCountryIndiaOrEmpty) {
         setIsPincodeLoading(true);
         const addressData = await fetchAddressByPincode(pincode);
         if (addressData) {
@@ -42,16 +49,29 @@ const LocationSection = ({ formData, setFormData }) => {
           const states = State.getStatesOfCountry(countryCode);
           const matchedState = states.find(s => s.name.toLowerCase() === addressData.state?.toLowerCase());
 
-          setFormData({
-            ...formData,
-            city: addressData.city || formData.city,
-            state: matchedState?.name || addressData.state || formData.state,
-            country: matchedCountry || { name: "India", code: "IN" }
-          });
+          const updatedFields = {};
+          const isCountryEmpty = !formData.country || (typeof formData.country === 'object' ? !formData.country.name : !formData.country);
+          if (isCountryEmpty) {
+            updatedFields.country = matchedCountry || { name: "India", code: "IN" };
+          }
+          if (!formData.state) {
+            updatedFields.state = matchedState?.name || addressData.state;
+          }
+          if (!formData.city) {
+            updatedFields.city = addressData.city;
+          }
+
+          if (Object.keys(updatedFields).length > 0) {
+            setFormData(prev => ({
+              ...prev,
+              ...updatedFields
+            }));
+          }
 
           if (countryCode) setStatesList(states);
           if (countryCode && matchedState?.isoCode) {
             setCitiesList(City.getCitiesOfState(countryCode, matchedState.isoCode));
+            citiesFetched.current = true;
           }
         }
         setIsPincodeLoading(false);
@@ -108,8 +128,13 @@ const LocationSection = ({ formData, setFormData }) => {
                 state: "",
                 city: ""
               });
-              setStatesList(State.getStatesOfCountry(country.isoCode));
+              if (country.isoCode && country.isoCode !== 'CUSTOM') {
+                setStatesList(State.getStatesOfCountry(country.isoCode));
+              } else {
+                setStatesList([]);
+              }
               setCitiesList([]);
+              citiesFetched.current = false;
             }}
           />
 
@@ -119,34 +144,37 @@ const LocationSection = ({ formData, setFormData }) => {
             options={statesList}
             value={formData.state}
             disabled={!formData.country}
-            isLoading={!statesList.length && formData.country}
+            isLoading={(() => {
+              const cObj = typeof formData.country === 'object' ? formData.country : countriesList.find(c => c.name === formData.country);
+              return !!(cObj && cObj.isoCode && cObj.isoCode !== 'CUSTOM' && !statesList.length);
+            })()}
             onChange={(state) => {
               setFormData({
                 ...formData,
                 state: state.name,
                 city: ""
               });
-              const cCode = formData.country?.isoCode || countriesList.find(c => c.name === formData.country)?.isoCode;
-              if (cCode) {
-                setCitiesList(City.getCitiesOfState(cCode, state.isoCode));
+              const cObj = typeof formData.country === 'object' ? formData.country : countriesList.find(c => c.name === formData.country);
+              if (cObj && cObj.isoCode && cObj.isoCode !== 'CUSTOM' && state.isoCode && state.isoCode !== 'CUSTOM') {
+                setCitiesList(City.getCitiesOfState(cObj.isoCode, state.isoCode));
+                citiesFetched.current = true;
+              } else {
+                setCitiesList([]);
+                citiesFetched.current = false;
               }
             }}
           />
 
-          <SearchableDropdown
-            label="City"
-            placeholder="Select City"
-            options={citiesList}
-            value={formData.city}
-            disabled={!formData.state}
-            isLoading={!citiesList.length && formData.state}
-            onChange={(city) => {
-              setFormData({
-                ...formData,
-                city: city.name
-              });
-            }}
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300">City</label>
+            <input
+              type="text"
+              placeholder="Enter City"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 focus:border-accent outline-none text-white"
+              value={formData.city || ""}
+              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            />
+          </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300 flex justify-between">

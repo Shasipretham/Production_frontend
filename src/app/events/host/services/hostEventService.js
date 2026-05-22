@@ -91,50 +91,78 @@ export const hostEventService = {
         return apiCall(`/events/submit/${id}`, "PUT")
     },
     uploadMedia: async (id, bannerImage, galleryImages, onProgress) => {
-        const mediaFormData = new FormData()
-
+        const uploads = [];
         if (bannerImage) {
-            mediaFormData.append("bannerImage", bannerImage)
+            uploads.push({ type: 'banner', file: bannerImage });
         }
-
         if (galleryImages && galleryImages.length > 0) {
-            galleryImages.forEach((image) => {
-                mediaFormData.append("galleryImages", image)
-            })
+            galleryImages.forEach(img => {
+                uploads.push({ type: 'gallery', file: img });
+            });
         }
 
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
+        if (uploads.length === 0) {
+            return { success: true };
+        }
 
-            xhr.upload.addEventListener('progress', (event) => {
-                if (event.lengthComputable && onProgress) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    onProgress(percentComplete);
-                }
-            });
+        const progressArray = new Array(uploads.length).fill(0);
+        const updateOverallProgress = () => {
+            if (onProgress) {
+                const totalProgress = progressArray.reduce((sum, p) => sum + p, 0);
+                onProgress(totalProgress / uploads.length);
+            }
+        };
 
-            xhr.addEventListener('load', () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(JSON.parse(xhr.responseText));
+        const uploadSingle = (item, index) => {
+            return new Promise((resolve, reject) => {
+                const mediaFormData = new FormData();
+                if (item.type === 'banner') {
+                    mediaFormData.append("bannerImage", item.file);
                 } else {
-                    let errorMessage = `Upload failed with status ${xhr.status}`;
-                    try {
-                        const errorData = JSON.parse(xhr.responseText);
-                        errorMessage = errorData.message || errorMessage;
-                    } catch (e) {
-                        if (xhr.status === 413) errorMessage = "File too large. Please upload smaller images.";
-                    }
-                    reject(new Error(errorMessage));
+                    mediaFormData.append("galleryImages", item.file);
                 }
-            });
 
-            xhr.addEventListener('error', () => {
-                reject(new Error('Network error during upload'));
-            });
+                const xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
 
-            xhr.open('PUT', `${API_URL}/events/media/${id}`);
-            xhr.send(mediaFormData);
-        });
+                xhr.upload.addEventListener('progress', (event) => {
+                    if (event.lengthComputable) {
+                        const percentComplete = (event.loaded / event.total) * 100;
+                        progressArray[index] = percentComplete;
+                        updateOverallProgress();
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        progressArray[index] = 100;
+                        updateOverallProgress();
+                        resolve(JSON.parse(xhr.responseText));
+                    } else {
+                        let errorMessage = `Upload failed with status ${xhr.status}`;
+                        try {
+                            const errorData = JSON.parse(xhr.responseText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {
+                            if (xhr.status === 413) errorMessage = "File too large. Please upload smaller images.";
+                        }
+                        reject(new Error(errorMessage));
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    reject(new Error('Network error during upload'));
+                });
+
+                xhr.open('PUT', `${API_URL}/events/media/${id}`);
+                xhr.send(mediaFormData);
+            });
+        };
+
+        let lastResult = null;
+        for (let i = 0; i < uploads.length; i++) {
+            lastResult = await uploadSingle(uploads[i], i);
+        }
+        return lastResult;
     }
 }

@@ -6,6 +6,7 @@ import { useCountry } from '@/context/CountryContext';
 import { hostService } from '@/services/hostService';
 import { getTermsFor } from '@/lib/host-terms-data';
 import { useGetMeQuery, authApi } from '@/store/api/authApi';
+import { compressImage } from '@/lib/imageUtils';
 import {
     useGetHostProfileQuery,
     useSaveHostMutation,
@@ -538,11 +539,17 @@ export function useHostCreation() {
         // Filter for NEW images only (those with a file object)
         const newImages = formData.images.filter(img => img.file);
         if (newImages.length > 0) {
-            const photoFd = new FormData();
-            newImages.forEach(img => {
-                photoFd.append('photo', img.file);
-            });
-            await updatePropertyMedia({ id: propertyId, formData: photoFd }).unwrap();
+            for (const img of newImages) {
+                const photoFd = new FormData();
+                try {
+                    const compressed = await compressImage(img.file);
+                    photoFd.append('photo', compressed);
+                } catch (err) {
+                    console.error("Failed to compress image, using original:", err);
+                    photoFd.append('photo', img.file);
+                }
+                await updatePropertyMedia({ id: propertyId, formData: photoFd }).unwrap();
+            }
         }
 
         // Only upload video if it is a new File object (not an existing URL object)
@@ -638,13 +645,25 @@ export function useHostCreation() {
 
             if (formData.idProof) {
                 const fd = new FormData();
-                fd.append('images', formData.idProof);
+                let uploadFileObj = formData.idProof;
+                try {
+                    uploadFileObj = await compressImage(formData.idProof);
+                } catch (err) {
+                    console.error("Failed to compress idProof:", err);
+                }
+                fd.append('images', uploadFileObj);
                 const res = await uploadFile(fd).unwrap();
                 if (res.urls && res.urls.length > 0) idPhotoUrl = res.urls[0];
             }
             if (formData.profilePhoto) {
                 const fd = new FormData();
-                fd.append('images', formData.profilePhoto);
+                let uploadFileObj = formData.profilePhoto;
+                try {
+                    uploadFileObj = await compressImage(formData.profilePhoto);
+                } catch (err) {
+                    console.error("Failed to compress profilePhoto:", err);
+                }
+                fd.append('images', uploadFileObj);
                 const res = await uploadFile(fd).unwrap();
                 if (res.urls && res.urls.length > 0) selfiePhotoUrl = res.urls[0];
             }

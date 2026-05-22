@@ -43,7 +43,18 @@ const SearchableDropdown = ({
     }, [options, searchQuery]);
 
     const selectedOption = useMemo(() => {
-        return options.find((opt) => opt.value === value || opt.name === value || opt.code === value);
+        if (!value) return null;
+        const found = options.find((opt) => opt.value === value || opt.name === value || opt.code === value);
+        if (found) return found;
+
+        // Support manual entries / custom text values
+        if (typeof value === "string") {
+            return { name: value, label: value, value: value };
+        }
+        if (value && typeof value === "object") {
+            return value;
+        }
+        return null;
     }, [options, value]);
 
     const handleSelect = (option) => {
@@ -126,8 +137,23 @@ const SearchableDropdown = ({
                                     );
                                 })
                             ) : (
-                                <div className="px-4 py-2 text-sm text-gray-500 italic">
-                                    No results found
+                                <div className="px-4 py-3 text-sm text-gray-500 italic flex flex-col gap-1">
+                                    <span>No results found</span>
+                                    {searchQuery && (
+                                        <span className="text-xs text-gray-400 not-italic">
+                                            Type custom value and click "Use '{searchQuery}' (Manual Entry)" below.
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Manual Entry Option */}
+                            {searchQuery && (
+                                <div
+                                    className="px-4 py-2.5 text-sm cursor-pointer flex items-center justify-between text-primary bg-primary/10 hover:bg-primary hover:text-white transition-all font-semibold border-t border-gray-200"
+                                    onClick={() => handleSelect({ name: searchQuery, label: searchQuery, value: searchQuery, isoCode: "CUSTOM", custom: true })}
+                                >
+                                    <span className="truncate">Use "{searchQuery}" (Manual Entry)</span>
                                 </div>
                             )}
                         </div>

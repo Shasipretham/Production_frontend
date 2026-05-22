@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { CountryCodeSelect } from "@/components/ui/CountryCodeSelect"
 import { Country, State, City } from 'country-state-city';
 import SearchableDropdown from "@/components/ui/SearchableDropdown";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCountry } from "@/context/CountryContext";
 
 export const EventDetailsSection = ({ formData, handleInputChange }) => {
@@ -16,6 +16,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
     ));
     const [statesList, setStatesList] = useState([]);
     const [citiesList, setCitiesList] = useState([]);
+    const citiesFetched = useRef(false);
 
     const getCurrencySymbol = (countryName) => {
         if (!countryName) return null;
@@ -59,11 +60,15 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                     const stateObj = states.find(s => s.name === formData.state);
                     if (stateObj) {
                         setCitiesList(City.getCitiesOfState(countryObj.isoCode, stateObj.isoCode));
+                        citiesFetched.current = true;
                     }
                 }
             }
         }
     }, []); // Run once on mount
+
+    const isValidCountry = countriesList.some(c => c.name === formData.country);
+    const isValidState = statesList.some(s => s.name === formData.state);
 
     return (
         <div className="rounded-xl p-6 border bg-[#f8f9fa] border-[#00162d]">
@@ -239,6 +244,7 @@ inputMode="numeric"                            className="text-gray-900 placehol
                             handleInputChange("city", "");
                             setStatesList(State.getStatesOfCountry(option.isoCode));
                             setCitiesList([]);
+                            citiesFetched.current = false;
                         }}
                     />
 
@@ -248,13 +254,16 @@ inputMode="numeric"                            className="text-gray-900 placehol
                         options={statesList}
                         value={formData.state}
                         disabled={!formData.country}
-                        isLoading={!statesList.length && formData.country}
+                        isLoading={isValidCountry && !statesList.length && formData.country}
                         onChange={(option) => {
                             handleInputChange("state", option.name);
                             handleInputChange("city", "");
                             const countryObj = countriesList.find(c => c.name === formData.country);
                             if (countryObj) {
                                 setCitiesList(City.getCitiesOfState(countryObj.isoCode, option.isoCode));
+                                citiesFetched.current = true;
+                            } else {
+                                citiesFetched.current = false;
                             }
                         }}
                     />
@@ -265,7 +274,7 @@ inputMode="numeric"                            className="text-gray-900 placehol
                         options={citiesList}
                         value={formData.city}
                         disabled={!formData.state}
-                        isLoading={!citiesList.length && formData.state}
+                        isLoading={isValidState && !citiesList.length && !citiesFetched.current && formData.state}
                         onChange={(option) => {
                             handleInputChange("city", option.name);
                         }}

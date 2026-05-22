@@ -1,7 +1,7 @@
 import { useSaveHostMutation, useGetHostProfileQuery } from "@/store/api/hostApi";
 import { useGetMeQuery } from "@/store/api/authApi";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 import { fetchAddressByPincode } from "@/lib/pincodeUtils";
 import { Navbar } from "@/components/layout/Navbar";
@@ -56,6 +56,7 @@ export default function HostOnboardingForm() {
   const [countriesList] = useState(Country.getAllCountries());
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
+  const citiesFetched = useRef(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -114,6 +115,7 @@ export default function HostOnboardingForm() {
             if (stateObj) {
               setFormData(prev => ({ ...prev, stateCode: stateObj.isoCode }));
               setCitiesList(City.getCitiesOfState(countryObj.isoCode, stateObj.isoCode));
+              citiesFetched.current = true;
             }
           }
         }
@@ -132,7 +134,12 @@ export default function HostOnboardingForm() {
   useEffect(() => {
     const fetchPincodeDetails = async () => {
       const pincode = formData.zip_code;
-      if (pincode && pincode.length === 6 && /^\d+$/.test(pincode)) {
+      const currentCountryName = typeof formData.country === 'object'
+        ? formData.country?.name
+        : formData.country;
+      const isCountryIndiaOrEmpty = !currentCountryName || currentCountryName.toLowerCase() === "india";
+
+      if (pincode && pincode.length === 6 && /^\d+$/.test(pincode) && isCountryIndiaOrEmpty) {
         setPincodeLoading(true);
         const addressData = await fetchAddressByPincode(pincode);
         if (addressData) {
@@ -142,14 +149,29 @@ export default function HostOnboardingForm() {
           const states = State.getStatesOfCountry(countryCode);
           const matchedState = states.find(s => s.name.toLowerCase() === addressData.state?.toLowerCase());
 
-          setFormData(prev => ({
-            ...prev,
-            city: addressData.city || prev.city,
-            state: matchedState?.name || addressData.state || prev.state,
-            stateCode: matchedState?.isoCode || "",
-            country: matchedCountry?.name || addressData.country || "India",
-            countryCode: countryCode
-          }));
+          setFormData(prev => {
+            const updatedFields = {};
+            const isCountryEmpty = !prev.country || (typeof prev.country === 'object' ? !prev.country.name : !prev.country);
+            if (isCountryEmpty) {
+              updatedFields.country = matchedCountry?.name || addressData.country || "India";
+              updatedFields.countryCode = countryCode;
+            }
+            if (!prev.state) {
+              updatedFields.state = matchedState?.name || addressData.state;
+              updatedFields.stateCode = matchedState?.isoCode || "";
+            }
+            if (!prev.city) {
+              updatedFields.city = addressData.city;
+            }
+
+            if (Object.keys(updatedFields).length > 0) {
+              return {
+                ...prev,
+                ...updatedFields
+              };
+            }
+            return prev;
+          });
 
           if (countryCode) setStatesList(states);
           if (countryCode && matchedState?.isoCode) {
@@ -505,8 +527,13 @@ export default function HostOnboardingForm() {
                       stateCode: "",
                       city: ""
                     }));
-                    setStatesList(State.getStatesOfCountry(country.isoCode));
+                    if (country.isoCode && country.isoCode !== 'CUSTOM') {
+                      setStatesList(State.getStatesOfCountry(country.isoCode));
+                    } else {
+                      setStatesList([]);
+                    }
                     setCitiesList([]);
+                    citiesFetched.current = false;
                   }}
                 />
 
@@ -516,7 +543,7 @@ export default function HostOnboardingForm() {
                   options={statesList}
                   value={formData.state}
                   disabled={!formData.countryCode}
-                  isLoading={!statesList.length && formData.countryCode}
+                  isLoading={!!(formData.countryCode && formData.countryCode !== 'CUSTOM' && !statesList.length)}
                   onChange={(state) => {
                     setFormData(prev => ({
                       ...prev,
@@ -524,24 +551,29 @@ export default function HostOnboardingForm() {
                       stateCode: state.isoCode,
                       city: ""
                     }));
-                    setCitiesList(City.getCitiesOfState(formData.countryCode, state.isoCode));
+                    if (formData.countryCode && formData.countryCode !== 'CUSTOM' && state.isoCode && state.isoCode !== 'CUSTOM') {
+                      setCitiesList(City.getCitiesOfState(formData.countryCode, state.isoCode));
+                      citiesFetched.current = true;
+                    } else {
+                      setCitiesList([]);
+                      citiesFetched.current = false;
+                    }
                   }}
                 />
 
-                <SearchableDropdown
-                  label="City"
-                  placeholder="Select City"
-                  options={citiesList}
-                  value={formData.city}
-                  disabled={!formData.stateCode}
-                  isLoading={!citiesList.length && formData.stateCode}
-                  onChange={(city) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      city: city.name
-                    }));
-                  }}
-                />
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                    City
+                  </label>
+                  <input
+                    id="city"
+                    name="city"
+                    placeholder="Enter City"
+                    value={formData.city || ""}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-lg shadow-sm placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+                  />
+                </div>
 
                 <div>
                   <label htmlFor="zip_code" className="block text-sm font-medium text-gray-700 mb-1">

@@ -76,11 +76,11 @@ export const CountryProvider = ({ children }) => {
     dispatch(authApi.util.resetApiState());
   }, [dispatch]);
 
-  const formatPrice = useCallback((amount) => {
+  const formatPrice = useCallback((amount, customCurrency) => {
     if (amount === undefined || amount === null) return "";
 
-    const currency = activeCountry?.currency || 'INR';
-    const locale = activeCountry?.code === 'IN' ? 'en-IN' : 'en-US';
+    const currency = customCurrency || activeCountry?.currency || 'INR';
+    const locale = currency === 'INR' ? 'en-IN' : 'en-US';
 
     return new Intl.NumberFormat(locale, {
       style: 'currency',

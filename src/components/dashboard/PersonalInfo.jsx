@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
     User, Phone, Mail, Globe,
     MapPin, Edit2, Share2, ExternalLink, Check, X, ChevronDown, Building2
@@ -193,6 +193,7 @@ export const PersonalInfo = ({ initialData, verificationState, onUpdate, isUpdat
     const [countriesList] = useState(Country.getAllCountries());
     const [statesList, setStatesList] = useState([]);
     const [citiesList, setCitiesList] = useState([]);
+    const citiesFetched = useRef(false);
 
     // Initialize location lists on mount or when data loads
     useEffect(() => {
@@ -206,6 +207,7 @@ export const PersonalInfo = ({ initialData, verificationState, onUpdate, isUpdat
                     const stateObj = states.find(s => s.name === formData.state);
                     if (stateObj) {
                         setCitiesList(City.getCitiesOfState(countryObj.isoCode, stateObj.isoCode));
+                        citiesFetched.current = true;
                     }
                 }
             }
@@ -340,6 +342,9 @@ export const PersonalInfo = ({ initialData, verificationState, onUpdate, isUpdat
         window.open(finalUrl, '_blank');
     }
 
+    const isValidCountry = countriesList.some(c => c.name === formData.country);
+    const isValidState = statesList.some(s => s.name === formData.state);
+
     return (
         <div className="relative min-h-screen">
             {/* Background Decorations */}
@@ -433,12 +438,15 @@ export const PersonalInfo = ({ initialData, verificationState, onUpdate, isUpdat
                                 options={statesList}
                                 value={formData.state}
                                 disabled={!formData.country}
-                                isLoading={!statesList.length && formData.country}
+                                isLoading={isValidCountry && !statesList.length && formData.country}
                                 onChange={(option) => {
                                     setFormData(prev => ({ ...prev, state: option.name, city: "" }));
                                     const countryObj = countriesList.find(c => c.name === formData.country);
                                     if (countryObj) {
                                         setCitiesList(City.getCitiesOfState(countryObj.isoCode, option.isoCode));
+                                        citiesFetched.current = true;
+                                    } else {
+                                        citiesFetched.current = false;
                                     }
                                 }}
                                 className="bg-white border-2 border-neutral/30 rounded-xl focus:ring-accent/30 focus:border-accent text-primary"
@@ -459,7 +467,7 @@ export const PersonalInfo = ({ initialData, verificationState, onUpdate, isUpdat
                                 options={citiesList}
                                 value={formData.city}
                                 disabled={!formData.state}
-                                isLoading={!citiesList.length && formData.state}
+                                isLoading={isValidState && !citiesList.length && !citiesFetched.current && formData.state}
                                 onChange={(option) => {
                                     setFormData(prev => ({ ...prev, city: option.name }));
                                 }}
