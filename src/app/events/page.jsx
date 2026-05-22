@@ -70,11 +70,25 @@ const EventsPage = () => {
       grouped[cat.id] = [];
     });
 
-    apiEvents.forEach(event => {
-const normalize = (str) =>
-  str?.toLowerCase().replace(/\s+/g, "").trim();
+    const classifyEventCategory = (e) => {
+      if (e.event_mode === "online") {
+        return "online";
+      }
+      const t = e.type?.toLowerCase().replace(/\s+/g, "").trim();
+      if (!t) return "other";
+      if (t === "public") return "sports";
+      if (t === "private") return "online";
+      if (t === "festival" || t === "music") return "festival";
+      if (t === "meetup" || t === "community") return "meetup";
+      if (t === "party" || t === "food") return "party";
+      if (t === "workshop" || t === "class" || t === "workshops") return "workshop";
+      if (t === "sports" || t === "wellness") return "sports";
+      if (t === "online") return "online";
+      return "other";
+    };
 
-const categoryId = normalize(event.type) || 'other';
+    apiEvents.forEach(event => {
+      const categoryId = classifyEventCategory(event);
       const uiEvent = {
         id: event._id || event.id,
         title: event.title || event.eventName || "Untitled Event",
@@ -113,6 +127,26 @@ const categoryId = normalize(event.type) || 'other';
     return Object.values(eventsByCategory).flat();
   }, [eventsByCategory]);
 
+  const uniqueLocations = useMemo(() => {
+    if (!apiEvents || apiEvents.length === 0) return [];
+    const locations = new Set();
+    apiEvents.forEach(event => {
+      if (event.event_mode?.toLowerCase() === "online") {
+        return;
+      }
+      const city = event.city?.trim();
+      const country = event.country?.trim();
+      if (city && country) {
+        locations.add(`${city}, ${country}`);
+      } else if (city) {
+        locations.add(city);
+      } else if (event.location && event.location !== "Location TBA") {
+        locations.add(event.location.trim());
+      }
+    });
+    return Array.from(locations).sort();
+  }, [apiEvents]);
+
   const totalEvents = useMemo(() => allEventsList.length, [allEventsList])
   const featuredEvents = useMemo(() => allEventsList.slice(0, 5), [allEventsList])
 
@@ -128,31 +162,36 @@ const categoryId = normalize(event.type) || 'other';
 const filteredEventsDisplay = useMemo(() => {
   let filtered = [...allEventsList];
 
-  const normalize = (str) =>
-    str?.toLowerCase().replace(/\s+/g, "").trim();
-
   // ✅ 1. CATEGORY BUTTON FILTER
   if (activeFilter !== "all" && activeFilter !== "trending") {
     filtered = filtered.filter(
-      e => normalize(e.type) === normalize(activeFilter)
+      e => e.category === activeFilter
     );
   }
 
   // ✅ 2. LOCATION FILTER
   if (selectedFilters.location) {
-    const query = selectedFilters.location.toLowerCase();
+    const query = selectedFilters.location.toLowerCase().trim();
 
-    filtered = filtered.filter(e => {
-      const city = e.city?.toLowerCase() || "";
-      const country = e.country?.toLowerCase() || "";
-      return city.includes(query) || country.includes(query);
-    });
+    if (query === "online") {
+      filtered = filtered.filter(e => e.category === "online" || e.event_mode?.toLowerCase() === "online");
+    } else {
+      filtered = filtered.filter(e => {
+        const city = e.city?.toLowerCase() || "";
+        const country = e.country?.toLowerCase() || "";
+        const location = e.location?.toLowerCase() || "";
+        const cleanQuery = query.replace(/,/g, " ").replace(/\s+/g, " ");
+        const searchString = `${city} ${country} ${location}`.replace(/,/g, " ").replace(/\s+/g, " ");
+        const queryWords = cleanQuery.split(" ").filter(Boolean);
+        return queryWords.every(word => searchString.includes(word));
+      });
+    }
   }
 
   // ✅ 3. DROPDOWN CATEGORY FILTER
   if (selectedFilters.category) {
     filtered = filtered.filter(
-      e => normalize(e.type) === normalize(selectedFilters.category)
+      e => e.category === selectedFilters.category
     );
   }
 
@@ -225,6 +264,7 @@ const filteredEventsDisplay = useMemo(() => {
         clearFilters={clearFilters}
         hasActiveFilters={hasActiveFilters}
         isScrolled={isScrolled}
+        uniqueLocations={uniqueLocations}
       />
 
       {/* Trending Events Section */}

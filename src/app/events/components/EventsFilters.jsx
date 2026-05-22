@@ -14,7 +14,8 @@ export const EventsFilters = memo(({
     handleFilterChange,
     clearFilters,
     hasActiveFilters,
-    isScrolled
+    isScrolled,
+    uniqueLocations = []
 }) => {
 
     // Prevent body scroll lock issues
@@ -201,15 +202,15 @@ export const EventsFilters = memo(({
                                             e.target.value
                                         )
                                     }
-                                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00142E] bg-white"
+                                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00142E] bg-white text-gray-900"
                                 >
                                     <option value="">Any Location</option>
                                     <option value="online">Online</option>
-                                    <option value="nearby">Near Me</option>
-                                    <option value="new-york">New York</option>
-                                    <option value="london">London</option>
-                                    <option value="tokyo">Tokyo</option>
-                                    <option value="paris">Paris</option>
+                                    {uniqueLocations.map((loc) => (
+                                        <option key={loc} value={loc}>
+                                            {loc}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
 

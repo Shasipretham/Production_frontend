@@ -90,11 +90,12 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         value={formData.event_type || "meetup"}
                         onChange={e => handleInputChange("event_type", e.target.value)}
                     >
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                        <option value="meetup">Meetup</option>
-                        <option value="festival">Festival</option>
-                        <option value="party">Party</option>
+                        <option value="festival">Music & Nightlife</option>
+                        <option value="meetup">Community Meetups</option>
+                        <option value="party">Food & Drink</option>
+                        <option value="workshop">Workshops & Classes</option>
+                        <option value="sports">Sports & Wellness</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
 

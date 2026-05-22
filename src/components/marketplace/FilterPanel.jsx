@@ -16,10 +16,11 @@ export function FilterPanel({ filters, onChange }) {
   // ✅ UPDATED CATEGORIES
   const categories = [
     { label: "All", value: "" },
-    { label: "Furniture", value: "furniture" },
-    { label: "Electronics", value: "electronics" },
-    { label: "Garden", value: "garden" },
-    { label: "Home Tools", value: "home_tools" },
+    { label: "Furniture", value: "Furniture" },
+    { label: "Electronics", value: "Electronics" },
+    { label: "Home & Garden", value: "Home & Garden" },
+    { label: "Clothing", value: "Clothing" },
+    { label: "Other", value: "Other" },
   ];
 
   const [isOpen, setIsOpen] = useState(false);

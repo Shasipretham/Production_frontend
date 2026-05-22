@@ -15,7 +15,8 @@ export const EVENT_CATEGORIES = [
   { id: "festival", title: "Music & Nightlife" },
   { id: "meetup", title: "Community Meetups" },
   { id: "party", title: "Food & Drink" },
-  { id: "other", title: "Workshops & Classes" },
-   { id: "public", title: "Sports & Wellness" },
-  { id: "private", title: "Online Events" }
+  { id: "workshop", title: "Workshops & Classes" },
+  { id: "sports", title: "Sports & Wellness" },
+  { id: "online", title: "Online Events" },
+  { id: "other", title: "Other" }
 ]
