@@ -22,6 +22,18 @@ const SCROLL_THRESHOLD = 50
 const VISIBILITY_THRESHOLD = 0.8
 const DEBOUNCE_DELAY = 100
 
+const parsePrice = (priceVal) => {
+  if (priceVal === undefined || priceVal === null || priceVal === "") return 0;
+  if (typeof priceVal === "number") return priceVal;
+  if (typeof priceVal === "string") {
+    if (priceVal.toLowerCase().includes("free")) return 0;
+    const cleaned = priceVal.replace(/[^0-9.]/g, "");
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+};
+
 const EventsPage = () => {
   const navigate = useNavigate()
   const { activeCountry } = useCountry()
@@ -188,6 +200,93 @@ const filteredEventsDisplay = useMemo(() => {
     }
   }
 
+  // ✅ 2.5 PRICE FILTER
+  if (selectedFilters.price) {
+    filtered = filtered.filter(e => {
+      const p = parsePrice(e.price);
+      switch (selectedFilters.price) {
+        case "free":
+          return p === 0;
+        case "0-25":
+          return p > 0 && p <= 25;
+        case "25-50":
+          return p > 25 && p <= 50;
+        case "50-100":
+          return p > 50 && p <= 100;
+        case "100+":
+          return p > 100;
+        default:
+          return true;
+      }
+    });
+  }
+
+  // ✅ 2.6 DATE FILTER
+  if (selectedFilters.date) {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(todayStart.getDate() + 1);
+    const tomorrowEnd = new Date(todayEnd);
+    tomorrowEnd.setDate(todayEnd.getDate() + 1);
+
+    const dayOfWeek = todayStart.getDay(); // 0 is Sunday, 1 is Monday...
+
+    filtered = filtered.filter(e => {
+      if (!e.date) return false;
+      const eventDate = new Date(e.date);
+      if (isNaN(eventDate.getTime())) return false;
+
+      const eventTime = eventDate.getTime();
+
+      switch (selectedFilters.date) {
+        case "today":
+          return eventTime >= todayStart.getTime() && eventTime <= todayEnd.getTime();
+        case "tomorrow":
+          return eventTime >= tomorrowStart.getTime() && eventTime <= tomorrowEnd.getTime();
+        case "this-week": {
+          const daysToSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
+          const endOfWeek = new Date(todayStart);
+          endOfWeek.setDate(todayStart.getDate() + daysToSunday);
+          endOfWeek.setHours(23, 59, 59, 999);
+          return eventTime >= todayStart.getTime() && eventTime <= endOfWeek.getTime();
+        }
+        case "this-weekend": {
+          const friday = new Date(todayStart);
+          friday.setDate(todayStart.getDate() + (5 - (dayOfWeek === 0 ? 7 : dayOfWeek)));
+          friday.setHours(0, 0, 0, 0);
+
+          const sunday = new Date(todayStart);
+          sunday.setDate(todayStart.getDate() + (7 - (dayOfWeek === 0 ? 7 : dayOfWeek)));
+          sunday.setHours(23, 59, 59, 999);
+
+          return eventTime >= friday.getTime() && eventTime <= sunday.getTime();
+        }
+        case "next-week": {
+          const daysToNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+          const nextMonday = new Date(todayStart);
+          nextMonday.setDate(todayStart.getDate() + daysToNextMonday);
+          nextMonday.setHours(0, 0, 0, 0);
+
+          const nextSunday = new Date(nextMonday);
+          nextSunday.setDate(nextMonday.getDate() + 6);
+          nextSunday.setHours(23, 59, 59, 999);
+
+          return eventTime >= nextMonday.getTime() && eventTime <= nextSunday.getTime();
+        }
+        case "this-month": {
+          const endOfMonth = new Date(todayStart.getFullYear(), todayStart.getMonth() + 1, 0, 23, 59, 59, 999);
+          return eventTime >= todayStart.getTime() && eventTime <= endOfMonth.getTime();
+        }
+        default:
+          return true;
+      }
+    });
+  }
+
   // ✅ 3. DROPDOWN CATEGORY FILTER
   if (selectedFilters.category) {
     filtered = filtered.filter(
@@ -233,11 +332,11 @@ const filteredEventsDisplay = useMemo(() => {
     setActiveFilter("all")
   }, [])
 
-  // (Moved up)
-
-  const handleViewDetails = useCallback((eventId) => {
+   const handleViewDetails = useCallback((eventId) => {
     navigate(`/events/${eventId}`)
   }, [navigate])
+
+  const isSearchingOrFiltering = activeFilter !== "all" || searchQuery !== "" || hasActiveFilters;
 
   return (
     <main className="min-h-screen bg-white font-sans">
@@ -267,112 +366,136 @@ const filteredEventsDisplay = useMemo(() => {
         uniqueLocations={uniqueLocations}
       />
 
-      {/* Trending Events Section */}
-      {/* Trending Events Section - Only show if NO search/filter active */}
-{filteredEventsDisplay.length === 0 && (
+      {/* 1. LANDING STATE (No active filter/search) */}
+      {!isSearchingOrFiltering ? (
+        <>
+          {/* Trending Events Section */}
           <div id="trending" className="container mx-auto max-w-7xl px-4 py-8 sm:py-12">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#00142E] flex items-center gap-3">
-              <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 text-[#00142E]" />
-              Trending Events
-              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-[#CB2A25] animate-pulse" />
-            </h2>
-            <button className="text-sm font-medium text-[#00142E] hover:text-[#00142E]/70 flex items-center gap-1 group transition-colors duration-300">
-              View All
-              <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" />
-            </button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#00142E] flex items-center gap-3">
+                <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 text-[#00142E]" />
+                Trending Events
+                <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-[#CB2A25] animate-pulse" />
+              </h2>
+              <button className="text-sm font-medium text-[#00142E] hover:text-[#00142E]/70 flex items-center gap-1 group transition-colors duration-300">
+                View All
+                <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+            </div>
+
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <div className="w-12 h-12 border-4 border-[#00142E] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-500 font-medium tracking-wide">Fetching amazing events...</p>
+              </div>
+            ) : featuredEvents.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 gap-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-8 w-8 text-gray-400" />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-700">No Trending Events</h3>
+                  <p className="text-gray-500 text-sm mt-1">Check back later for trending events in your area</p>
+                </div>
+              </div>
+            ) : (
+              <div className={`grid gap-4 sm:gap-6 mb-12 sm:mb-16 ${viewMode === "grid"
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                : "grid-cols-1"
+                }`}>
+                {featuredEvents.map((event, index) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    viewMode={viewMode}
+                    onViewDetails={handleViewDetails}
+                    index={index}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="w-12 h-12 border-4 border-[#00142E] border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-500 font-medium tracking-wide">Fetching amazing events...</p>
+          {/* Grouped Category Sections */}
+          <div className="container mx-auto max-w-7xl px-4 pb-8 sm:pb-12">
+            <div className="space-y-12 animate-in fade-in duration-500">
+              {EVENT_CATEGORIES.map((category, categoryIndex) => {
+                const events = eventsByCategory[category.id] || []
+                return (
+                  <EventsSection
+                    key={category.id}
+                    category={category}
+                    events={events}
+                    onViewDetails={handleViewDetails}
+                    categoryIndex={categoryIndex}
+                  />
+                )
+              })}
+
+              {/* Show empty state if all categories are empty */}
+              {Object.values(eventsByCategory).every(arr => arr.length === 0) && !isLoading && (
+                <div className="flex flex-col items-center justify-center py-20 gap-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-10 w-10 text-gray-400" />
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-gray-700">No Events Available</h3>
+                    <p className="text-gray-500 mt-2 max-w-md">There are no events in your selected region right now. Check back soon or try a different location.</p>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : featuredEvents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 gap-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="h-8 w-8 text-gray-400" />
+          </div>
+        </>
+      ) : (
+        /* 2. SEARCH/FILTER ACTIVE STATE */
+        <div className="container mx-auto max-w-7xl px-4 pb-8 sm:pb-12">
+          {filteredEventsDisplay.length > 0 ? (
+            <div className="space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
+              <h2 className="text-2xl font-bold text-[#00142E] mt-4">
+                Found {filteredEventsDisplay.length} events
+              </h2>
+              <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
+                {paginatedEvents.map((event, index) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    viewMode={viewMode}
+                    onViewDetails={handleViewDetails}
+                    index={index}
+                  />
+                ))}
               </div>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-700">No Trending Events</h3>
-                <p className="text-gray-500 text-sm mt-1">Check back later for trending events in your area</p>
-              </div>
+
+              {/* Pagination Logic */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+              />
             </div>
           ) : (
-            <div className={`grid gap-4 sm:gap-6 mb-12 sm:mb-16 ${viewMode === "grid"
-              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-              : "grid-cols-1"
-              }`}>
-              {featuredEvents.map((event, index) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  viewMode={viewMode}
-                  onViewDetails={handleViewDetails}
-                  index={index}
-                />
-              ))}
+            /* Premium Filter Empty State */
+            <div className="flex flex-col items-center justify-center py-20 gap-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 my-8 animate-in fade-in duration-500">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                <Sparkles className="h-10 w-10 text-gray-400 animate-pulse" />
+              </div>
+              <div className="text-center max-w-md px-4">
+                <h3 className="text-xl font-bold text-gray-700">No Events Found</h3>
+                <p className="text-gray-500 mt-2 text-sm leading-relaxed">
+                  We couldn't find any events matching your selected category, search query, or advanced filters. Try resetting your choices to discover more!
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-6 px-6 py-2.5 bg-[#00142E] text-white font-semibold rounded-xl hover:bg-[#00142E]/90 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
+                >
+                  Clear All Filters
+                </button>
+              </div>
             </div>
           )}
         </div>
       )}
-
-      {/* Event Sections or Search Results */}
-      <div className="container mx-auto max-w-7xl px-4 pb-8 sm:pb-12">
-{filteredEventsDisplay.length > 0 ? (          <div className="space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
-            <h2 className="text-2xl font-bold text-[#00142E] mt-4">
-              {filteredEventsDisplay.length > 0 ? `Found ${filteredEventsDisplay.length} events` : "No events found"}
-            </h2>
-            <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
-              {paginatedEvents.map((event, index) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  viewMode={viewMode}
-                  onViewDetails={handleViewDetails}
-                  index={index}
-                />
-              ))}
-            </div>
-
-            {/* Pagination Logic */}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={goToPage}
-            />
-          </div>
-        ) : (
-          <div className="space-y-12 animate-in fade-in duration-500">
-            {EVENT_CATEGORIES.map((category, categoryIndex) => {
-              const events = eventsByCategory[category.id] || []
-              return (
-                <EventsSection
-                  key={category.id}
-                  category={category}
-                  events={events}
-                  // visibleSections={visibleSections} // Removed
-                  onViewDetails={handleViewDetails}
-                  categoryIndex={categoryIndex}
-                />
-              )
-            })}
-
-            {/* Show empty state if all categories are empty */}
-            {Object.values(eventsByCategory).every(arr => arr.length === 0) && !isLoading && (
-              <div className="flex flex-col items-center justify-center py-20 gap-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Sparkles className="h-10 w-10 text-gray-400" />
-                </div>
-                <div className="text-center">
-                  <h3 className="text-xl font-semibold text-gray-700">No Events Available</h3>
-                  <p className="text-gray-500 mt-2 max-w-md">There are no events in your selected region right now. Check back soon or try a different location.</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
 
       <Footer />
     </main>

@@ -25,7 +25,9 @@ export function FilterPanel({ filters, onChange }) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [countriesList] = useState(Country.getAllCountries());
+  const [countriesList] = useState(Country.getAllCountries().map(c =>
+    c.isoCode === 'US' ? { ...c, name: "United States of America" } : c
+  ));
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
 
@@ -39,22 +41,36 @@ export function FilterPanel({ filters, onChange }) {
     filters.state ||
     filters.city;
 
-  // Initialize states/cities if filters already have values
+  // Keep statesList and citiesList in perfect sync with filters.country and filters.state
   React.useEffect(() => {
     if (filters.country) {
-      const countryObj = countriesList.find(c => c.name === filters.country || c.isoCode === filters.country);
+      const countryObj = countriesList.find(
+        c => c.name === filters.country || c.isoCode === filters.country
+      );
       if (countryObj) {
         const states = State.getStatesOfCountry(countryObj.isoCode);
         setStatesList(states);
         if (filters.state) {
-          const stateObj = states.find(s => s.name === filters.state || s.isoCode === filters.state);
+          const stateObj = states.find(
+            s => s.name === filters.state || s.isoCode === filters.state
+          );
           if (stateObj) {
             setCitiesList(City.getCitiesOfState(countryObj.isoCode, stateObj.isoCode));
+          } else {
+            setCitiesList([]);
           }
+        } else {
+          setCitiesList([]);
         }
+      } else {
+        setStatesList([]);
+        setCitiesList([]);
       }
+    } else {
+      setStatesList([]);
+      setCitiesList([]);
     }
-  }, []);
+  }, [filters.country, filters.state, countriesList]);
 
   const handleClear = () => {
     onChange({

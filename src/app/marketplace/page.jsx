@@ -41,6 +41,25 @@ export default function MarketplacePage() {
   
 
   const { activeCountry, isSelected } = useCountry();
+
+  useEffect(() => {
+    if (activeCountry?.name) {
+      let countryName = activeCountry.name;
+      if (countryName === "United States" || countryName.startsWith("United States")) {
+        countryName = "United States of America";
+      }
+      setFilters(prev => {
+        // Only update if country changed, keeping other filters intact unless country changed
+        const countryChanged = prev.country !== countryName;
+        return {
+          ...prev,
+          country: countryName,
+          state: countryChanged ? "" : prev.state,
+          city: countryChanged ? "" : prev.city,
+        };
+      });
+    }
+  }, [activeCountry]);
   // products state is now managed by RTK Query
   const { data: productsData, isLoading: loading, error } = useGetBuySellListingsQuery({
     country: filters.country || activeCountry?.name,
