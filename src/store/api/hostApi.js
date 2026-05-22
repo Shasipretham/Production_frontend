@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const API_BASE_URL = import.meta.env.PROD
-    ? 
-    // "https://api.nextkinlife.live"
-    "http://localhost:5000/api"
+    ?
+    "https://api.nextkinlife.live"
+    // "http://localhost:5000/api"
     : "/api";
 
 const rawBase = fetchBaseQuery({
@@ -838,7 +838,7 @@ export const hostApi = createApi({
                     url: `notification/${id}`,
                     method: "DELETE"
                 });
-                
+
                 const deletedIds = JSON.parse(localStorage.getItem('deletedNotifications') || '[]');
                 if (!deletedIds.includes(id)) {
                     deletedIds.push(id);
@@ -856,7 +856,7 @@ export const hostApi = createApi({
                     url: "notification/",
                     method: "DELETE"
                 });
-                
+
                 localStorage.setItem('deleteAllNotificationsTime', Date.now().toString());
                 return { data: { success: true } };
             },
