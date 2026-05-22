@@ -488,7 +488,7 @@ export default function PostTripModal({ onClose, onAdd }) {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Arrival Date & Time (Optional)</label>
+                                            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-foreground)' }}>Arrival Date & Time</label>
                                             <div className="flex gap-2">
                                                 <input
                                                     name="arrival_date"

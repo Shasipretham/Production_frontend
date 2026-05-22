@@ -165,9 +165,21 @@ const CommunityDetailsForm = () => {
 
         try {
             // Step 1: Create Community
+            // If there's a topic typed in the input box but not added yet, append it
+            let finalTopics = [...formData.topics];
+            if (newTopic.trim()) {
+                const extraTopics = newTopic.split(',').map(t => t.trim()).filter(Boolean);
+                extraTopics.forEach(t => {
+                    if (!finalTopics.includes(t)) {
+                        finalTopics.push(t);
+                    }
+                });
+            }
+
             // Combine phone number
             const payload = {
                 ...formData,
+                topics: finalTopics,
                 phone: formData.phone ? `${formData.phoneCode}${formData.phone}` : ""
             };
 
@@ -348,18 +360,29 @@ const CommunityDetailsForm = () => {
                                     updateFormData("phoneCode", val);
                                     if (iso) updateFormData("phoneIso", iso);
                                 }}
-                                className="w-full bg-white/5 border-white/10 text-white [&>button]:bg-white/5 [&>button]:border-white/10 [&>button]:text-white"
+                                className="w-full bg-white/5 text-white [&>button]:bg-white/5 [&>button]:border-white/10 [&>button]:text-white"
                             />
                         </div>
                         <div className="flex-1 relative">
                             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                            <Input
-                                type="tel"
-                                placeholder="1234567890"
-                                className="pl-12"
-                                value={formData.phone}
-                                onChange={(e) => updateFormData('phone', e.target.value)}
-                            />
+                           <Input
+    type="tel"
+    placeholder="1234567890"
+    className="pl-12"
+    value={formData.phone}
+    onChange={(e) => {
+        let val = e.target.value;
+
+        // allow only numbers
+        val = val.replace(/[^0-9]/g, "");
+
+        // limit to 10 digits
+        val = val.slice(0, 10);
+
+        updateFormData('phone', val);
+    }}
+    inputMode="numeric"
+/>
                         </div>
                     </div>
                 </div>
@@ -511,8 +534,7 @@ const CommunityDetailsForm = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-5 bg-accent hover:bg-red-700 disabled:bg-white/10 disabled:text-gray-500 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-accent/10 active:scale-[0.98] flex items-center justify-center gap-2"
-                    >
+className="w-full py-3 md:py-5 px-4 bg-accent hover:bg-red-700 disabled:bg-white/10 disabled:text-gray-500 text-white rounded-xl md:rounded-2xl font-bold md:font-black text-sm md:text-base uppercase tracking-wide md:tracking-widest transition-all shadow-md md:shadow-xl shadow-accent/10 active:scale-[0.98] flex items-center justify-center gap-2 whitespace-nowrap"                    >
                         {isSubmitting ? (
                             <> <Loader2 size={18} className="animate-spin" /> Saving Changes... </>
                         ) : (

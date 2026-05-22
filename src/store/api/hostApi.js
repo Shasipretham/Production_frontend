@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const API_BASE_URL = import.meta.env.PROD
-    ? "https://api.nextkinlife.live"
+    ? 
+    // "https://api.nextkinlife.live"
+    "http://localhost:5000/api"
     : "/api";
 
 const rawBase = fetchBaseQuery({
@@ -794,7 +796,22 @@ export const hostApi = createApi({
             providesTags: ["Notification"],
             transformResponse: (response) => {
                 const items = response?.notifications || response?.data || response || [];
-                return Array.isArray(items) ? items : [];
+                if (!Array.isArray(items)) return [];
+
+                const deletedIds = JSON.parse(localStorage.getItem('deletedNotifications') || '[]');
+                const deleteAllTime = parseInt(localStorage.getItem('deleteAllNotificationsTime') || '0', 10);
+
+                return items
+                    .filter(n => {
+                        const notifId = n.id || n._id;
+                        const notifTime = new Date(n.createdAt || n.created_at || 0).getTime();
+                        return !deletedIds.includes(notifId) && notifTime >= deleteAllTime;
+                    })
+                    .map(n => ({
+                        ...n,
+                        id: n.id || n._id,
+                        is_read: n.is_read !== undefined ? n.is_read : n.read
+                    }));
             },
         }),
 
@@ -816,19 +833,33 @@ export const hostApi = createApi({
 
         // Delete single notification
         deleteNotification: builder.mutation({
-            query: (id) => ({
-                url: `notification/notifications/${id}`,
-                method: "DELETE",
-            }),
+            queryFn: async (id, _queryApi, _extraOptions, baseQuery) => {
+                await baseQuery({
+                    url: `notification/${id}`,
+                    method: "DELETE"
+                });
+                
+                const deletedIds = JSON.parse(localStorage.getItem('deletedNotifications') || '[]');
+                if (!deletedIds.includes(id)) {
+                    deletedIds.push(id);
+                    localStorage.setItem('deletedNotifications', JSON.stringify(deletedIds));
+                }
+                return { data: { success: true } };
+            },
             invalidatesTags: ["Notification"],
         }),
 
         // Delete all notifications
         deleteAllNotifications: builder.mutation({
-            query: () => ({
-                url: "notification/notifications",
-                method: "DELETE",
-            }),
+            queryFn: async (undefined, _queryApi, _extraOptions, baseQuery) => {
+                await baseQuery({
+                    url: "notification/",
+                    method: "DELETE"
+                });
+                
+                localStorage.setItem('deleteAllNotificationsTime', Date.now().toString());
+                return { data: { success: true } };
+            },
             invalidatesTags: ["Notification"],
         }),
 

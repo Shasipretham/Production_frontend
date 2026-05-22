@@ -38,7 +38,7 @@ export const CountryCodeSelect = ({ value, onChange, className, isoCode }) => {
                     setSearch(""); // Reset search on open
                 }}
                 className={cn(
-                    "flex items-center justify-between gap-1.5 px-3 h-full min-h-[36px] bg-white border border-gray-300 rounded-md hover:border-gray-400 transition-all w-full",
+                    "flex items-center justify-between gap-1.5 px-3 h-full min-h-[36px] bg-white border border-[#00162d]  rounded-md hover:border-gray-400 transition-all w-full",
                     "sm:min-h-[40px]" // Matches standard input height
                 )}
             >
@@ -66,7 +66,7 @@ export const CountryCodeSelect = ({ value, onChange, className, isoCode }) => {
                         className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-neutral/10 max-h-64 flex flex-col z-50 overflow-hidden"
                     >
                         {/* Search Input */}
-                        <div className="p-2 border-b border-neutral/10 bg-white sticky top-0 z-10">
+                        <div className="p-2 border border-neutral/10 bg-white sticky top-0 z-10">
                             <input
                                 type="text"
                                 placeholder="Search country..."
@@ -90,18 +90,18 @@ export const CountryCodeSelect = ({ value, onChange, className, isoCode }) => {
                                             setIsOpen(false);
                                         }}
                                         className={cn(
-                                            "w-full text-left px-4 py-2.5 flex items-center justify-between hover:bg-neutral/5 transition-colors",
+                                            "w-full text-left text-black px-4 py-2.5 flex items-center justify-between hover:bg-neutral/5 transition-colors",
                                             (value === country.phoneCode && (!isoCode || isoCode === country.code)) && "bg-neutral/10"
                                         )}
                                     >
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 ">
                                             {(country.flag.startsWith('/') || country.flag.startsWith('http')) ? (
                                                 <img src={country.flag} alt={country.name} className="w-5 h-3.5 object-cover rounded-sm shadow-sm" />
                                             ) : (
                                                 <span className="text-xl leading-none">{country.flag}</span>
                                             )}
                                             <span className="text-sm font-medium text-primary truncate max-w-[120px]">{country.name}</span>
-                                            <span className="text-xs text-neutral/50 font-mono ml-auto">({country.phoneCode})</span>
+                                            <span className="text-xs text-black font-mono ml-auto">({country.phoneCode})</span>
                                         </div>
                                         {(value === country.phoneCode && (!isoCode || isoCode === country.code)) && <Check className="w-3 h-3 text-accent shrink-0 ml-2" />}
                                     </button>

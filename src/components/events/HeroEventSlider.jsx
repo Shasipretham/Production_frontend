@@ -169,15 +169,22 @@ export const HeroEventSlider = ({ events = [] }) => {
                     {/* Bottom Section: Action */}
                     <div className="flex justify-between items-center">
                         <Link to={`/events/${currentEvent.id}`}>
-                            <motion.button
-                                className="group relative px-6 py-2 bg-[#C93A30] hover:bg-[#b02e25] text-white rounded-full font-medium text-sm shadow-lg flex items-center gap-2"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                            >
-                                View Details
-                                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                            </motion.button>
+                          <motion.button
+  className="group relative 
+    px-3 py-1 text-xs 
+    sm:px-4 sm:py-1.5 sm:text-sm 
+    md:px-5 md:py-2 md:text-sm 
+    lg:px-6 lg:py-2.5 lg:text-base
+    bg-[#C93A30] hover:bg-[#b02e25] 
+    text-white rounded-full font-medium 
+    shadow-lg flex items-center gap-1 sm:gap-2"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+>
+  View Details
+  <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
+</motion.button>
                         </Link>
 
                         <div className="flex gap-2">

@@ -297,7 +297,6 @@ export const useHostEvent = () => {
             // ALWAYS call updateVenue — this is where event_mode gets saved
             const venuePayload = {
                 event_mode: formData.event_mode,
-                event_url: formData.event_url,
                 online_instructions: formData.online_instructions
             }
             if (formData.event_mode !== 'online') {
@@ -312,6 +311,17 @@ export const useHostEvent = () => {
                     ? formData.what_is_included.split(',').map(s => s.trim()).filter(Boolean)
                     : formData.what_is_included
             }
+
+            // Format and sanitize event_url to prevent Joi/backend URI validation errors
+            const rawUrl = formData.event_url?.trim()
+            if (rawUrl) {
+                if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(rawUrl)) {
+                    venuePayload.event_url = rawUrl
+                } else {
+                    venuePayload.event_url = `https://${rawUrl}`
+                }
+            }
+
             await hostEventService.updateVenue(currentId, venuePayload)
 
             // Backend eventScheduleSchema expects: end_date, end_time, schedule

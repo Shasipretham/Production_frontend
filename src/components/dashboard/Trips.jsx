@@ -358,99 +358,229 @@ export const Trips = () => {
                                     {/* Gradient Accent Bar */}
                                     <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-primary via-secondary to-accent"></div>
 
-                                    <div className="p-6 md:p-8">
-                                        <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-0">
-                                            {/* Left: Trip Info */}
-                                            <div className="flex-1 space-y-6">
-                                                <div className="flex items-start gap-4">
-                                                    <div className="p-3 bg-gradient-to-br from-primary/5 to-neutral/10 rounded-2xl text-primary">
-                                                        <Plane className="w-6 h-6 rotate-45" />
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-1">
-                                                            <h3 className="font-black text-2xl text-primary">
-                                                                {trip.from_city}
-                                                            </h3>
-                                                            <ArrowRight className="w-5 h-5 text-accent/60" />
-                                                            <h3 className="font-black text-2xl text-primary">
-                                                                {trip.to_city}
-                                                            </h3>
-                                                        </div>
-                                                        <p className="text-sm font-medium text-primary/50 flex items-center gap-2">
-                                                            <span className="b">{trip.airline}</span>
-                                                            <span className="w-1 h-1 bg-primary/30 rounded-full"></span>
-                                                            <span className="font-mono bg-neutral/10 px-1.5 rounded text-primary/70">{trip.flight_number}</span>
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                    <div className="p-6 sm:p-6 bmd:p-8">
+                                       <div className="flex flex-col md:flex-row justify-between gap-5 md:gap-0">
 
-                                                <div className="flex flex-wrap gap-4">
-                                                    <div className="flex items-center gap-2.5 px-4 py-2 bg-neutral/5 rounded-xl border border-neutral/10">
-                                                        <Calendar className="w-4 h-4 text-accent" />
-                                                        <span className="text-sm font-semibold text-primary/80">
-                                                            {new Date(trip.travel_date).toLocaleDateString(undefined, {
-                                                                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
-                                                            })}
-                                                        </span>
-                                                    </div>
-                                                    {(() => {
-                                                        const time = trip.departure_time || trip.time || trip.flight?.departureTime;
-                                                        // Convert 24h time string to 12h AM/PM
-                                                        const formatTime12h = (t) => {
-                                                            if (!t) return null;
-                                                            const [h, m] = t.split(':').map(Number);
-                                                            if (isNaN(h) || isNaN(m)) return t;
-                                                            const period = h >= 12 ? 'PM' : 'AM';
-                                                            const hour12 = h % 12 || 12;
-                                                            return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
-                                                        };
-                                                        // Try to extract time from travel_date if it has a time component (ISO string)
-                                                        const dateTime = !time && trip.travel_date && trip.travel_date.includes('T')
-                                                            ? new Date(trip.travel_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: true })
-                                                            : null;
-                                                        const displayTime = time ? formatTime12h(time) : dateTime;
-                                                        return displayTime ? (
-                                                            <div className="flex items-center gap-2.5 px-4 py-2 bg-neutral/5 rounded-xl border border-neutral/10">
-                                                                <Clock className="w-4 h-4 text-accent" />
-                                                                <span className="text-sm font-semibold text-primary/80">
-                                                                    {displayTime}
-                                                                </span>
-                                                            </div>
-                                                        ) : null;
-                                                    })()}
-                                                </div>
-                                            </div>
+    {/* MOBILE UI */}
+    <div className="block md:hidden w-full">
 
-                                            {/* Right: Actions & Status */}
-                                            <div className="flex md:flex-col justify-between items-end gap-4 min-w-[140px]">
-                                                <span className={cn(
-                                                    "px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider",
-                                                    trip.status === 'active' ? 'bg-green-100 text-green-700' :
-                                                        trip.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                                            'bg-neutral/20 text-primary/60'
-                                                )}>
-                                                    {trip.status}
-                                                </span>
+        {/* Top Route */}
+        <div className="flex flex-col items-center text-center">
 
-                                                {trip.status === 'active' && (
-                                                    <button
-                                                        onClick={() => setActiveMatchTrip(activeMatchTrip === trip.id ? null : trip.id)}
-                                                        className={cn(
-                                                            "flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 border",
-                                                            activeMatchTrip === trip.id
-                                                                ? "bg-neutral/20 text-primary border-transparent"
-                                                                : "border-primary text-primary hover:bg-primary hover:text-white"
-                                                        )}
-                                                    >
-                                                        {activeMatchTrip === trip.id ? (
-                                                            <>Close Matcher <X className="w-4 h-4" /></>
-                                                        ) : (
-                                                            <>Find Partner <Users className="w-4 h-4" /></>
-                                                        )}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
+            <div className="w-16 h-16 rounded-2xl bg-neutral/5 flex items-center justify-center mb-4">
+                <Plane className="w-8 h-8 rotate-45 text-primary" />
+            </div>
+
+            <div className="space-y-1">
+                <h2 className="text-[22px] font-black text-primary leading-tight">
+                    {trip.from_city}
+                </h2>
+
+                <ArrowRight className="w-5 h-5 text-accent mx-auto" />
+
+                <h2 className="text-[22px] font-black text-primary leading-tight">
+                    {trip.to_city}
+                </h2>
+            </div>
+
+            {/* Airline */}
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                <span className="text-sm text-primary/60">
+                    {trip.airline}
+                </span>
+
+                <span className="font-mono bg-neutral/10 px-2 py-1 rounded-lg text-xs text-primary/70">
+                    {trip.flight_number}
+                </span>
+            </div>
+        </div>
+
+        {/* Date */}
+        <div className="mt-6 flex justify-center">
+            <div className="flex items-center gap-2 px-4 py-3 bg-neutral/5 rounded-2xl border border-neutral/10">
+
+                <Calendar className="w-4 h-4 text-accent" />
+
+                <span className="text-sm font-semibold text-primary/80">
+                    {new Date(trip.travel_date).toLocaleDateString(
+                        undefined,
+                        {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                        }
+                    )}
+                </span>
+            </div>
+        </div>
+
+        {/* Status */}
+        <div className="mt-5">
+            <div
+                className={cn(
+                    "w-full py-3 rounded-full text-center text-sm font-bold uppercase tracking-wide",
+                    trip.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : trip.status === "cancelled"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-neutral/10 text-primary/60"
+                )}
+            >
+                {trip.status}
+            </div>
+        </div>
+
+        {/* Button */}
+        {trip.status === "active" && (
+            <button
+                onClick={() =>
+                    setActiveMatchTrip(
+                        activeMatchTrip === trip.id
+                            ? null
+                            : trip.id
+                    )
+                }
+                className={cn(
+                    `
+                    mt-4
+                    w-full
+                    h-14
+                    rounded-2xl
+                    border
+                    flex items-center justify-center gap-2
+                    font-bold
+                    text-base
+                    transition-all duration-200
+                    `,
+                    activeMatchTrip === trip.id
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white text-primary border-primary"
+                )}
+            >
+                {activeMatchTrip === trip.id ? (
+                    <>
+                        Close Matcher
+                        <X className="w-5 h-5" />
+                    </>
+                ) : (
+                    <>
+                        Find Partner
+                        <Users className="w-5 h-5" />
+                    </>
+                )}
+            </button>
+        )}
+    </div>
+
+    {/* DESKTOP/TABLET UI */}
+    <div className="hidden md:flex w-full justify-between">
+
+        {/* Left: Trip Info */}
+        <div className="flex-1 space-y-6">
+            <div className="flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-primary/5 to-neutral/10 rounded-2xl text-primary">
+                    <Plane className="w-6 h-6 rotate-45" />
+                </div>
+
+                <div>
+                    <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-1">
+                        <h3 className="font-black text-2xl text-primary">
+                            {trip.from_city}
+                        </h3>
+
+                        <ArrowRight className="w-5 h-5 text-accent/60" />
+
+                        <h3 className="font-black text-2xl text-primary">
+                            {trip.to_city}
+                        </h3>
+                    </div>
+
+                    <p className="text-sm font-medium text-primary/50 flex items-center gap-2">
+                        <span>{trip.airline}</span>
+
+                        <span className="font-mono bg-neutral/10 px-1.5 rounded text-primary/70">
+                            {trip.flight_number}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap gap-4">
+                <div className="flex items-center gap-2.5 px-4 py-2 bg-neutral/5 rounded-xl border border-neutral/10">
+                    <Calendar className="w-4 h-4 text-accent" />
+
+                    <span className="text-sm font-semibold text-primary/80">
+                        {new Date(trip.travel_date).toLocaleDateString(
+                            undefined,
+                            {
+                                weekday: "short",
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                            }
+                        )}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {/* Right */}
+        <div className="flex flex-col gap-3 min-w-[140px] items-end">
+
+            <span
+                className={cn(
+                    "px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider",
+                    trip.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : trip.status === "cancelled"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-neutral/20 text-primary/60"
+                )}
+            >
+                {trip.status}
+            </span>
+
+            {trip.status === "active" && (
+                <button
+                    onClick={() =>
+                        setActiveMatchTrip(
+                            activeMatchTrip === trip.id
+                                ? null
+                                : trip.id
+                        )
+                    }
+                    className={cn(
+                        `
+                        flex items-center gap-2
+                        px-5 py-3
+                        rounded-xl
+                        font-semibold text-sm
+                        whitespace-nowrap
+                        transition-all duration-200
+                        border
+                        `,
+                        activeMatchTrip === trip.id
+                            ? "bg-neutral/20 text-primary border-transparent"
+                            : "border-primary text-primary hover:bg-primary hover:text-white"
+                    )}
+                >
+                    {activeMatchTrip === trip.id ? (
+                        <>
+                            Close Matcher
+                            <X className="w-4 h-4" />
+                        </>
+                    ) : (
+                        <>
+                            Find Partner
+                            <Users className="w-4 h-4" />
+                        </>
+                    )}
+                </button>
+            )}
+        </div>
+    </div>
+</div>
 
                                         {/* Match Finder Section */}
                                         {activeMatchTrip === trip.id && (

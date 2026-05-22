@@ -62,7 +62,7 @@ export function MarketplaceLayout({ children, activeTab, onTabChange }) {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        <Button
+                        {/* <Button
                             variant="ghost"
                             className="relative overflow-hidden group bg-gradient-to-r from-[#C93A30] to-[#E04642] hover:from-[#b02e25] hover:to-[#d03d39] text-white font-bold text-sm h-10 sm:h-11 px-5 sm:px-6 rounded-xl shadow-lg shadow-[#C93A30]/25 hover:shadow-[#C93A30]/40 transition-all duration-300 cursor-pointer"
                         >
@@ -70,7 +70,7 @@ export function MarketplaceLayout({ children, activeTab, onTabChange }) {
                             <Sparkles className="h-4 w-4 mr-2 fill-white/30" />
                             <span className="hidden sm:inline relative z-10">My Listings</span>
                             <span className="sm:hidden relative z-10">Listings</span>
-                        </Button>
+                        </Button> */}
                     </motion.div>
                 </div>
             </div>

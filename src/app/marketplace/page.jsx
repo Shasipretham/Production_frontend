@@ -38,6 +38,7 @@ export default function MarketplacePage() {
     city: "",
     search: "",
   });
+  
 
   const { activeCountry, isSelected } = useCountry();
   // products state is now managed by RTK Query

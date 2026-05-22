@@ -20,7 +20,7 @@ export const Sidebar = ({ activeTab, onTabChange }) => {
     ];
 
     return (
-        <div className="w-64 flex-shrink-0">
+        <div className="hidden lg:block w-64 flex-shrink-0">
             <nav className="space-y-1">
                 {menuItems.map((item) => (
                     <button

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useGetPublicTripsQuery } from "@/store/api/authApi";
+import { useGetPublicTripsQuery, useGetMeQuery } from "@/store/api/authApi";
 import { useCountry } from "@/context/CountryContext";
 import { Loader2, ExternalLink, MapPin, Calendar, MessageCircle, ShieldCheck, User } from 'lucide-react';
 import { SectionHeader } from '../home/featured/SectionHeader';
@@ -98,6 +98,9 @@ const CommunityCard = ({ match, onConnect }) => {
 
 export const TravelCommunity = ({ onConnect }) => {
     const { activeCountry } = useCountry();
+    const { data: userData } = useGetMeQuery();
+    const currentUserId = userData?.user?.id || userData?.id;
+
     // Helper to ensure backend gets the full name it likely expects for USA
     const getBackendCountryName = (c) => {
         if (!c) return c;
@@ -123,6 +126,7 @@ export const TravelCommunity = ({ onConnect }) => {
 
         return {
             id: trip.id,
+            hostId: trip.host?.id || trip.user_id,
             name: trip.host?.full_name || "Traveler",
             location: fromCity,
             country: fromCountry,
@@ -133,6 +137,9 @@ export const TravelCommunity = ({ onConnect }) => {
             })
         };
     }).filter(match => {
+        // Exclude the user's own trips
+        if (currentUserId && match.hostId === currentUserId) return false;
+
         // Double check country matching if backend doesn't filter strictly enough
         if (!activeCountry?.name) return true;
 

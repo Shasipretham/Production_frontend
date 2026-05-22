@@ -365,7 +365,9 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
     const formData = new FormData();
 
     appendIfExists(formData, "title", title);
-    appendIfExists(formData, "price", Number(price));
+    if (price !== "" && price !== null && price !== undefined) {
+      formData.append("price", Number(price));
+    }
     appendIfExists(formData, "description", description);
 
     appendIfExists(formData, "country", typeof country === 'string' ? country : country?.name);
@@ -691,7 +693,12 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
         {/* CONTACT */}
         <div className="bg-white p-4 rounded-lg space-y-3">
           <Label>Name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input value={name} onChange={(e) => {
+  let val = e.target.value;
+  // allow alphabets, spaces, hyphens, and apostrophes for international names
+  val = val.replace(/[^a-zA-Z\s'-]/g, "");
+  setName(val);
+}} />
 
           {/* <Label>Email</Label> */}
           {/* <Input
@@ -714,8 +721,15 @@ export function SellForm({ onPost, initialData, isEditing: externalIsEditing }) 
             <Input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="flex-1"
+onChange={(e) => {
+  let val = e.target.value;
+  // only numbers
+  val = val.replace(/[^0-9]/g, "");
+  // limit to 15 digits (E.164 standard max length)
+  val = val.slice(0, 15);
+  setPhone(val);
+}}
+inputMode="numeric"              className="flex-1"
             />
           </div>
         </div>

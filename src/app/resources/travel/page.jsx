@@ -285,10 +285,12 @@ export default function TravelPage() {
       };
     }).filter((plan) => {
       const matchesSearch =
-        plan.user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plan.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plan.flight.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plan.flight.to.toLowerCase().includes(searchTerm.toLowerCase());
+        !searchTerm ||
+        plan.user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan.destination?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan.flight.from?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan.flight.to?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        plan.flight.airline?.toLowerCase().includes(searchTerm.toLowerCase());
 
       // Filter by ORIGIN country (where traveler is flying FROM) - For CO-TRAVELER matching
       const matchesCountry = !filters.country || plan.flight.from_country?.toLowerCase() === filters.country.toLowerCase();
@@ -302,8 +304,15 @@ export default function TravelPage() {
         });
       }
 
-      const matchesState = !filters.state || plan.user.state === filters.state;
-      const matchesCity = !filters.city || plan.flight.from?.toLowerCase().includes(filters.city.toLowerCase());
+      const matchesState =
+        !filters.state ||
+        plan.user.state?.toLowerCase().includes(filters.state.toLowerCase());
+
+      const matchesCity =
+        !filters.city ||
+        plan.user.city?.toLowerCase().includes(filters.city.toLowerCase()) ||
+        plan.flight.from?.toLowerCase().includes(filters.city.toLowerCase()) ||
+        plan.flight.to?.toLowerCase().includes(filters.city.toLowerCase());
 
       return matchesSearch && matchesCountry && matchesState && matchesCity;
     });
@@ -411,7 +420,7 @@ export default function TravelPage() {
       <style>{colorStyles}</style>
       <Navbar />
 
-      <main className="min-h-screen pt-20" style={{ backgroundColor: 'var(--color-background)' }}>
+      <main className="min-h-screen pt-15 md:pt-20" style={{ backgroundColor: 'var(--color-background)' }}>
 
         {/* Hero Section */}
         <section className="relative min-h-[75vh] flex items-center bg-cover bg-center"
@@ -427,18 +436,40 @@ export default function TravelPage() {
                 Connect with fellow travelers sharing your flight path. <br />
                 Safe, verified, and community-driven matching.
               </p>
-              <div className="flex gap-4">
-                <button onClick={() => setShowModal(true)} className="px-8 py-4 rounded-xl font-bold flex items-center gap-2 shadow-2xl transition-transform hover:scale-105 active:scale-95 text-white" style={{ backgroundColor: 'var(--color-accent)' }}>
-                  <Plane size={20} /> Post Your Trip
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="
+    w-full sm:w-auto
+    px-4 py-2 text-sm 
+    sm:px-6 sm:py-3 sm:text-base 
+    md:px-8 md:py-4
+    rounded-xl font-bold flex items-center justify-center gap-2 
+    shadow-2xl transition-transform hover:scale-105 active:scale-95 text-white
+  "
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  <Plane className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="truncate">Post Your Trip</span>
                 </button>
                 {currentUser && (
                   <button
                     onClick={() => setShowRequestsModal(true)}
-                    className="px-8 py-4 rounded-xl font-bold flex items-center gap-2 shadow-2xl transition-transform hover:scale-105 active:scale-95 bg-white/10 backdrop-blur-md text-white border border-white/20 relative"
+                    className="
+      w-full sm:w-auto
+      px-4 py-2 text-sm 
+      sm:px-6 sm:py-3 sm:text-base 
+      md:px-8 md:py-4
+      rounded-xl font-bold flex items-center justify-center gap-2 
+      shadow-2xl transition-transform hover:scale-105 active:scale-95 
+      bg-white/10 backdrop-blur-md text-white border border-white/20 relative
+    "
                   >
-                    <Users size={20} /> Match Requests
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="truncate">Match Requests</span>
+
                     {matches.filter(m => m.status === 'pending' && myTrips.some(t => t.id === m.matched_trip_id)).length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center animate-pulse">
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center animate-pulse">
                         {matches.filter(m => m.status === 'pending' && myTrips.some(t => t.id === m.matched_trip_id)).length}
                       </span>
                     )}
@@ -450,7 +481,7 @@ export default function TravelPage() {
         </section>
 
         {/* Search & Filter Section */}
-        <div className="container mx-auto px-6 -mt-16 relative z-30">
+        <div className="container mx-auto px-6 -mt-24 relative z-30">
           <TravelFilter
             searchQuery={searchTerm}
             setSearchQuery={setSearchTerm}

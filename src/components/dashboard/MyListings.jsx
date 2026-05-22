@@ -142,9 +142,9 @@ export const MyListings = () => {
                 <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-neutral/10 to-accent/5 rounded-full blur-3xl"></div>
             </div>
 
-            <div className="relative z-10 p-4 md:p-8 space-y-8">
+            <div className="relative z-10 p-3 sm:p-4 md:p-8 space-y-6 md:space-y-8">
                 {/* Header Section */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-secondary to-navy-dark p-8 text-white">
+                <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-primary via-secondary to-navy-dark p-4 md:p-8 text-white">
                     <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 40%)' }}></div>
 
                     <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -154,12 +154,12 @@ export const MyListings = () => {
                                 NextKin Verified Host
                             </div>
                             <h1 className="text-3xl md:text-4xl font-bold mb-2">My Listings Portfolio</h1>
-                            <p className="text-white/60 max-w-md">Manage your spaces and experiences. Track performance and grow your hosting business.</p>
+                            <p className="text-white/60 w-full text-sm md:text-base">Manage your spaces and experiences. Track performance and grow your hosting business.</p>
                         </div>
 
                         <Button
                             onClick={() => navigate(activeTab === "spaces" ? "/host/create" : "/events/host")}
-                            className="bg-white text-primary hover:bg-neutral/20 rounded-xl h-12 px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                            className="bg-white text-primary hover:bg-neutral/20 rounded-xl h-10 md:h-12 px-4 md:px-6 text-sm md:text-base w-full sm:w-auto font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                         >
                             <Plus className="w-4 h-4 mr-2" />
                             Create New {activeTab === "spaces" ? "Space" : "Experience"}
@@ -167,8 +167,8 @@ export const MyListings = () => {
                     </div>
 
                     {/* Stats Row */}
-                    <div className="relative z-10 mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+<div className="relative z-10 mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/10">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-neutral/20 rounded-lg">
                                     <Home className="w-5 h-5 text-neutral" />
@@ -179,24 +179,26 @@ export const MyListings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                            <div className="flex items-center gap-3">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/10">
+                            <div className="flex items-center gap-2">
                                 <div className="p-2 bg-accent/20 rounded-lg">
                                     <Sparkles className="w-5 h-5 text-accent" />
                                 </div>
                                 <div>
                                     <p className="text-2xl font-bold">{visibleEvents.length}</p>
-                                    <p className="text-xs text-white/60">Experiences</p>
+                                 <p className="text-xs text-white/60 truncate max-w-[70px]">
+    Experiences
+</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/10">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-green-500/20 rounded-lg">
                                     <TrendingUp className="w-5 h-5 text-green-300" />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold">{visibleProperties.length + visibleEvents.length}</p>
+                                    <p className="text-lg md:text-2xl font-bold">{visibleProperties.length + visibleEvents.length}</p>
                                     <p className="text-xs text-white/60">Total Listings</p>
                                 </div>
                             </div>
@@ -207,11 +209,11 @@ export const MyListings = () => {
 
                 {/* Tabs Section */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="bg-white p-1.5 rounded-2xl shadow-lg border border-gray-100 flex items-center gap-1 w-fit">
+                   <div className="bg-white p-1 rounded-xl shadow-lg border border-gray-100 flex items-center w-full">
                         <button
                             onClick={() => setActiveTab("spaces")}
                             className={cn(
-                                "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200",
+                                "flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-sm whitespace-nowrap font-semibold transition-all duration-200",
                                 activeTab === "spaces"
                                     ? "bg-accent text-white shadow-md"
                                     : "text-primary/50 hover:text-primary hover:bg-neutral/10"
@@ -229,7 +231,7 @@ export const MyListings = () => {
                         <button
                             onClick={() => setActiveTab("experiences")}
                             className={cn(
-                                "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200",
+                                "w-1/2 flex items-center justify-center gap-1 px-2 py-2 rounded-lg text-xs whitespace-nowrap font-semibold transition-all duration-200",
                                 activeTab === "experiences"
                                     ? "bg-accent text-white shadow-md"
                                     : "text-primary/50 hover:text-primary hover:bg-neutral/10"
@@ -254,14 +256,14 @@ export const MyListings = () => {
 
                 {/* Content Section */}
                 {isError ? (
-                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 to-red-50 border border-rose-100 p-12 text-center">
+                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-50 to-red-50 border border-rose-100 p-6 md:p-6 md:p-12 text-center">
                         <div className="absolute inset-0 bg-gradient-to-br from-rose-400/5 to-red-400/10"></div>
                         <div className="relative z-10">
                             <div className="w-20 h-20 mx-auto bg-gradient-to-br from-rose-100 to-rose-200 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                                 <AlertCircle className="w-10 h-10 text-rose-500" />
                             </div>
                             <h4 className="text-2xl font-bold mb-3 text-rose-700">Failed to load {activeTab}</h4>
-                            <p className="text-rose-600/70 max-w-md mx-auto mb-6">{error?.message || "An unexpected error occurred. Please try again."}</p>
+                            <p className="text-rose-600/70 w-full mb-6">{error?.message || "An unexpected error occurred. Please try again."}</p>
                             <Button
                                 onClick={() => window.location.reload()}
                                 className="bg-rose-500 hover:bg-rose-600 text-white rounded-xl px-6 py-3"
@@ -280,7 +282,7 @@ export const MyListings = () => {
                         <p className="text-sm text-primary/40">This won't take long</p>
                     </div>
                 ) : currentListings.length === 0 ? (
-                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral/10 via-white to-neutral/20 border border-neutral/30 p-12 text-center shadow-xl">
+                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral/10 via-white to-neutral/20 border border-neutral/30 p-6 md:p-6 md:p-12 text-center shadow-xl">
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent"></div>
                         <div className="relative z-10">
                             <div className="w-24 h-24 mx-auto bg-gradient-to-br from-neutral/30 to-neutral/50 rounded-3xl flex items-center justify-center mb-6 shadow-lg">
@@ -291,14 +293,14 @@ export const MyListings = () => {
                                 )}
                             </div>
                             <h4 className="text-2xl font-bold mb-3 text-primary">No {activeTab} yet</h4>
-                            <p className="text-primary/50 max-w-md mx-auto mb-8">
+                            <p className="text-primary/50 w-full mb-8">
                                 {activeTab === "spaces"
                                     ? "Start your hosting journey. Share your space with the NextKin community and earn."
                                     : "Create memorable experiences for travelers and locals. Share your passion with the world."}
                             </p>
                             <Button
                                 onClick={() => navigate(activeTab === "spaces" ? "/host/create" : "/events/host")}
-                                className="bg-accent hover:bg-accent/90 text-white rounded-xl px-8 py-4 h-auto font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                                className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-sm whitespace-nowrap font-semibold transition-all duration-200 flex-shrink-0"
                             >
                                 <Plus className="w-5 h-5 mr-2" />
                                 Create Your First {activeTab === "spaces" ? "Space" : "Experience"}
@@ -307,7 +309,7 @@ export const MyListings = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                         {activeTab === "spaces" ? (
                             paginatedListings.map(p => (
                                 <div key={p._id || p.id} className="transform hover:-translate-y-1 transition-all duration-200">

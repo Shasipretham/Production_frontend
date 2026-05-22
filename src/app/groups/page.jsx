@@ -31,39 +31,58 @@ export default function GroupsPage() {
   const [joinCommunity] = useJoinCommunityMutation();
   const [leaveCommunity] = useLeaveCommunityMutation();
 
+ const normalize = (str) =>
+  str
+    ?.toLowerCase()
+    .replace(/&/g, "and")        // ✅ fix special char
+    .replace(/[^a-z0-9]+/g, " ") // ✅ remove symbols
+    .replace(/\s+/g, " ")
+    .trim();
+
   // --- Filter Logic ---
-  const filteredCommunities = React.useMemo(() => {
-    if (!communities) return [];
+ const filteredCommunities = React.useMemo(() => {
+  if (!communities) return [];
 
-    return communities.filter(community => {
-      // 1. Search Query Filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchName = community.name?.toLowerCase().includes(query);
-        const matchCity = community.city?.toLowerCase().includes(query);
-        const matchCountry = community.country?.toLowerCase().includes(query);
-        const matchDesc = community.description?.toLowerCase().includes(query);
+  return communities.filter((community) => {
 
-        if (!matchName && !matchCity && !matchCountry && !matchDesc) return false;
-      }
+    // 🔍 SEARCH
+    if (searchQuery) {
+      const query = normalize(searchQuery);
 
-      // 2. Category Filter (Simple mapping based on FILTERS in Header)
-      if (activeFilter !== "All") {
-        // This assumes 'topics' or other fields map to these filters.
-        // Adjust logic based on actual data structure if needed.
-        // For now, let's assume simple string matching or exact types if available.
-        // If "Cities" -> has city
-        if (activeFilter === "Cities" && !community.city) return false;
-        if (activeFilter === "Countries" && !community.country) return false;
-        // For others (Students, Workers etc), checking topics
-        if (["Students", "Workers", "Visa & Immigration", "Accommodation Help", "Buy/Sell", "Women-only"].includes(activeFilter)) {
-          return community.topics?.includes(activeFilter) || community.category === activeFilter;
-        }
-      }
+      const match =
+        normalize(community.name)?.includes(query) ||
+        normalize(community.city)?.includes(query) ||
+        normalize(community.country)?.includes(query) ||
+        normalize(community.description)?.includes(query);
 
-      return true;
-    });
-  }, [communities, searchQuery, activeFilter]);
+      if (!match) return false;
+    }
+
+    // 🎯 FILTER
+    if (activeFilter === "All") return true;
+
+    // Cities filter
+    if (activeFilter === "Cities") {
+      return !!community.city;
+    }
+
+    // Countries filter
+    if (activeFilter === "Countries") {
+      return !!community.country;
+    }
+
+    // 🔥 FIXED TOPIC FILTER (THIS IS YOUR ISSUE FIX)
+if (community.topics?.length) {
+  return community.topics.some(
+    (topic) =>
+      normalize(topic) === normalize(activeFilter)
+  );
+}
+
+    return false;
+  });
+
+}, [communities, searchQuery, activeFilter]);
 
   // --- Categorize communities for display using FILTERED list ---
   const cityGroups = filteredCommunities.filter(community => community.city);

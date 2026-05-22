@@ -10,29 +10,35 @@ const DEFAULT_COUNTRY = COUNTRIES.find(c => c.code === "IN") || { name: "India",
 
 export const CountryProvider = ({ children }) => {
   const dispatch = useDispatch();
-  const [activeCountry, setActiveCountry] = useState(DEFAULT_COUNTRY);
-  const [isSelected, setIsSelected] = useState(false);
-  const [isGeolocationLoading, setIsGeolocationLoading] = useState(false);
-
-  // Load from localStorage on app load
-  useEffect(() => {
-    const saved = localStorage.getItem("selectedCountry");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed?.code) {
-          setActiveCountry(parsed);
-          setIsSelected(true);
-          return;
+  const [activeCountry, setActiveCountry] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("selectedCountry");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed?.code) return parsed;
+        } catch (e) {
+          console.error("Error parsing selectedCountry", e);
         }
-      } catch (e) {
-        console.error("Error parsing selectedCountry", e);
       }
     }
+    return DEFAULT_COUNTRY;
+  });
+  
+  const [isSelected, setIsSelected] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem("selectedCountry");
+    }
+    return false;
+  });
+  
+  const [isGeolocationLoading, setIsGeolocationLoading] = useState(false);
 
-    // If not selected, try geolocation
-    initializeWithGeolocation();
-  }, []);
+  useEffect(() => {
+    if (!isSelected) {
+      initializeWithGeolocation();
+    }
+  }, [isSelected]);
 
   const initializeWithGeolocation = async () => {
     try {
@@ -48,15 +54,15 @@ export const CountryProvider = ({ children }) => {
             return;
           }
         }
+      } else {
+        console.warn(`Geolocation API failed with status: ${response.status}`);
       }
     } catch (e) {
-      console.error("Geolocation failed", e);
+      console.error("Geolocation network request failed:", e.message);
     } finally {
       setIsGeolocationLoading(false);
-      // Fallback: If we couldn't determine the country or API failed, still show DEFAULT_COUNTRY instead of "Select Country"
-      if (!isSelected) {
-        setIsSelected(true);
-      }
+      // Ensure we mark as selected to prevent infinite loops, even on failure
+      setIsSelected(true);
     }
   };
 

@@ -15,6 +15,12 @@ import {
 } from "@/store/api/hostApi";
 import { useDispatch } from "react-redux";
 import { useTimeAgo } from "../../hooks/useTimeAgo";
+import { 
+    clearNotifications as clearLocalNotifications,
+    markAllAsRead as markAllLocalAsRead,
+    markAsRead as markLocalAsRead,
+    removeNotification as removeLocalNotification
+} from "@/store/slices/notificationSlice";
 
 import { useGetMeQuery } from "@/store/api/authApi";
 
@@ -63,6 +69,7 @@ export function NotificationDropdown({ minimal = false }) {
     const handleMarkAsRead = async (id) => {
         try {
             await markAsRead(id).unwrap();
+            dispatch(markLocalAsRead(id));
         } catch (err) {
             console.error("Failed to mark notification as read:", err);
         }
@@ -71,6 +78,7 @@ export function NotificationDropdown({ minimal = false }) {
     const handleClearAll = async () => {
         try {
             await markAllAsRead().unwrap();
+            dispatch(markAllLocalAsRead());
         } catch (err) {
             console.error("Failed to mark all as read:", err);
         }
@@ -79,6 +87,7 @@ export function NotificationDropdown({ minimal = false }) {
     const handleDeleteNotification = async (id) => {
         try {
             await deleteNotification(id).unwrap();
+            dispatch(removeLocalNotification(id));
         } catch (err) {
             console.error("Failed to delete notification:", err);
         }
@@ -87,6 +96,7 @@ export function NotificationDropdown({ minimal = false }) {
     const handleDeleteAll = async () => {
         try {
             await deleteAllNotifications().unwrap();
+            dispatch(clearLocalNotifications());
         } catch (err) {
             console.error("Failed to delete all notifications:", err);
         }

@@ -78,7 +78,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.title || ""}
                         onChange={e => handleInputChange("title", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Give your event a catchy title"
                     />
                 </div>
@@ -117,7 +117,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         type="date"
                         value={formData.date || ""}
                         onChange={e => handleInputChange("date", e.target.value)}
-                        className="mt-1 text-gray-900 border-[#00162d]"
+                        className="mt-1 text-gray-900 border-[#00162d] border"
                     />
                 </div>
 
@@ -127,7 +127,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         type="date"
                         value={formData.end_date || ""}
                         onChange={e => handleInputChange("end_date", e.target.value)}
-                        className="mt-1 text-gray-900 border-[#00162d]"
+                        className="mt-1 text-gray-900 border-[#00162d] border"
                     />
                 </div>
 
@@ -137,7 +137,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         type="time"
                         value={formData.time || ""}
                         onChange={e => handleInputChange("time", e.target.value)}
-                        className="mt-1 text-gray-900 border-[#00162d]"
+                        className="mt-1 text-gray-900 border-[#00162d] border"
                     />
                 </div>
 
@@ -147,7 +147,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         type="time"
                         value={formData.end_time || ""}
                         onChange={e => handleInputChange("end_time", e.target.value)}
-                        className="mt-1 text-gray-900 border-[#00162d]"
+                        className="mt-1 text-gray-900 border-[#00162d] border"
                     />
                 </div>
 
@@ -160,7 +160,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         type="number"
                         value={formData.price || ""}
                         onChange={e => handleInputChange("price", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="0.00"
                     />
                     <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
@@ -177,7 +177,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.event_url || ""}
                         onChange={e => handleInputChange("event_url", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="https://example.com"
                     />
                 </div>
@@ -202,15 +202,25 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         <Input
                             type="tel"
                             value={formData.phone || ""}
-                            onChange={e => handleInputChange("phone", e.target.value)}
-                            className="text-gray-900 placeholder-gray-400 border-[#00162d]"
+onChange={(e) => {
+    let val = e.target.value;
+
+    // allow only numbers
+    val = val.replace(/[^0-9]/g, "");
+
+    // limit to 10 digits
+    val = val.slice(0, 10);
+
+    handleInputChange("phone", val);
+}}
+inputMode="numeric"                            className="text-gray-900 placeholder-gray-400 border-[#00162d] border "
                             placeholder="Phone number"
                         />
                     </div>
                 </div>
             </div>
 
-            <div className="md:col-span-2 space-y-4">
+            <div className="md:col-span-2 space-y-4 mt-4">
                 <Label className="font-medium text-sm flex items-center text-[#00162d]">
                     <MapPin className="h-4 w-4 mr-1 text-[#00162d]" />
                     Location & Region
@@ -265,7 +275,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                         <Input
                             value={formData.zip_code || ""}
                             onChange={e => handleInputChange("zip_code", e.target.value)}
-                            className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                            className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                             placeholder="Zip Code"
                         />
                     </div>
@@ -277,7 +287,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                 <Textarea
                     value={formData.description || ""}
                     onChange={e => handleInputChange("description", e.target.value)}
-                    className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                    className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                     placeholder="Describe your event in detail"
                     rows={4}
                 />
@@ -289,7 +299,7 @@ export const EventDetailsSection = ({ formData, handleInputChange }) => {
                     <Textarea
                         value={formData.online_instructions || ""}
                         onChange={e => handleInputChange("online_instructions", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="How to join your online event"
                         rows={3}
                     />

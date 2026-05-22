@@ -60,7 +60,14 @@ const Signin = () => {
   };
 
   const loginWithGoogle = () => {
-    window.location.href = "https://api.nextkinlife.live/auth/google";
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? "http://localhost:5000/api" : "/api");
+    const backendOrigin = apiBaseUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
+    
+    if (!backendOrigin) {
+      window.location.href = "/api/auth/google";
+    } else {
+      window.location.href = `${backendOrigin}/auth/google`;
+    }
   };
 
   return (

@@ -13,9 +13,30 @@ export function FilterPanel({ filters, onChange }) {
     location: false,
   });
 
+  // ✅ UPDATED CATEGORIES
+  const categories = [
+    { label: "All", value: "" },
+    { label: "Furniture", value: "furniture" },
+    { label: "Electronics", value: "electronics" },
+    { label: "Garden", value: "garden" },
+    { label: "Home Tools", value: "home_tools" },
+  ];
+
+  const [isOpen, setIsOpen] = useState(false);
+
   const [countriesList] = useState(Country.getAllCountries());
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
+
+  // Check if any filter is active to show/hide the clear button
+  const hasActiveFilters =
+    filters.search ||
+    filters.priceMin ||
+    filters.priceMax ||
+    filters.category ||
+    filters.country ||
+    filters.state ||
+    filters.city;
 
   // Initialize states/cities if filters already have values
   React.useEffect(() => {
@@ -34,7 +55,6 @@ export function FilterPanel({ filters, onChange }) {
     }
   }, []);
 
-  // ✅ ONLY RESET WHAT MARKETPLACE PAGE USES
   const handleClear = () => {
     onChange({
       priceMin: "",
@@ -47,13 +67,14 @@ export function FilterPanel({ filters, onChange }) {
     });
     setStatesList([]);
     setCitiesList([]);
+    setOpen({ all: false, price: false, category: false, location: false });
   };
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm">
       {/* TOP ROW */}
       <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-start justify-start">
-        {/* Search (UI only, not affecting filters) */}
+        {/* Search */}
         <div className="relative flex-1 w-full border border-gray-300 rounded-lg">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
@@ -76,9 +97,17 @@ export function FilterPanel({ filters, onChange }) {
             Location & More
           </Button>
 
-
-
-
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClear}
+              className="text-xs sm:text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <X className="h-3.5 w-3.5 mr-2" />
+              Clear
+            </Button>
+          )}
         </div>
       </div>
 
@@ -87,7 +116,7 @@ export function FilterPanel({ filters, onChange }) {
         <div className="mt-4 grid grid-cols-1 text-[#00152d] text-md md:grid-cols-3 gap-6 border-t pt-4">
 
           {/* LOCATION SECTION */}
-          {/* {(open.all || open.location) && (
+          {(open.all || open.location) && (
             <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b border-gray-100">
               <SearchableDropdown
                 label="Country"
@@ -137,7 +166,7 @@ export function FilterPanel({ filters, onChange }) {
                 }}
               />
             </div>
-          )} */}
+          )}
 
           {/* PRICE */}
           {(open.all || open.price) && (
@@ -174,29 +203,44 @@ export function FilterPanel({ filters, onChange }) {
 
           {/* CATEGORY */}
           {(open.all || open.category) && (
-            <div>
+            <div className="relative w-full">
               <h4 className="text-sm font-semibold text-gray-700 mb-2">Category</h4>
-              <select
-                value={filters.category}
-                onChange={(e) =>
-                  onChange({
-                    ...filters,
-                    category: e.target.value,
-                  })
-                }
-                className="w-full h-9 sm:h-10 border text-[#00152d] border-gray-300 rounded-lg px-3 text-sm"
+
+              {/* BUTTON */}
+              <button
+                onClick={() => setIsOpen(prev => !prev)}
+                className="w-full h-11 border border-[#00142E] bg-white rounded-xl px-4 flex justify-between items-center text-sm font-medium"
               >
-                <option value="">All</option>
-                <option value="furniture">Furniture</option>
-                <option value="electronics">Electronics</option>
-                <option value="moving">Moving</option>
-                <option value="urgent">Urgent</option>
-              </select>
+                {categories.find(c => c.value === filters.category)?.label || "All"}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+
+              {/* DROPDOWN */}
+              {isOpen && (
+                <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                  {categories.map((item) => (
+                    <div
+                      key={item.value}
+                      onClick={() => {
+                        onChange({ ...filters, category: item.value });
+                        setIsOpen(false);
+                      }}
+                      className={`px-4 py-3 text-sm cursor-pointer transition
+            ${filters.category === item.value
+                          ? "bg-[#00142E] text-white"
+                          : "hover:bg-gray-50"}
+          `}
+                    >
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
+
         </div>
       )}
-
     </div>
   );
 }

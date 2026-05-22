@@ -656,12 +656,26 @@ export default function GroupDetailsPage() {
             case "resources":
                 return (
                     <div className="p-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold text-gray-900">Community Resources</h2>
-                            <Button onClick={() => setShowResourceForm(!showResourceForm)} className="bg-blue-600 text-white">
-                                {showResourceForm ? "Cancel" : <><Plus className="w-4 h-4 mr-2" /> Add Resource</>}
-                            </Button>
-                        </div>
+                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    
+    <h2 className="text-xl md:text-2xl font-bold">
+        Community Resources
+    </h2>
+
+    <Button
+        onClick={() => setShowResourceForm(!showResourceForm)}
+        className="bg-blue-600 text-white w-full sm:w-auto  mb-4 flex items-center justify-center"
+    >
+        {showResourceForm ? "Cancel" : (
+            <>
+                <Plus className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Add Resource</span>
+                <span className="sm:hidden">Add Resource</span>
+            </>
+        )}
+    </Button>
+
+</div>
 
                         {/* Add Resource Form */}
                         {showResourceForm && (
@@ -833,7 +847,7 @@ export default function GroupDetailsPage() {
     }
 
     return (
-        <main className="min-h-screen bg-background pt-20 pb-10">
+        <main className="min-h-screen bg-background pt-20">
             <Navbar />
 
             {/* Breadcrumb */}

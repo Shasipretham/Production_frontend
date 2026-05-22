@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useGetMeQuery } from '@/store/api/authApi';
 import { useGetHostProfileQuery } from '@/store/api/hostApi';
 
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+
 const HostGuard = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -24,7 +26,7 @@ const HostGuard = ({ children }) => {
         // If not logged in, redirect to signin
         if (!user) {
             // Optional: You might want to save the current location to redirect back after login
-            navigate('/signin');
+            navigate('/signin', { replace: true, state: { from: location } });
             return;
         }
 
@@ -35,11 +37,11 @@ const HostGuard = ({ children }) => {
             navigate('/hosts', { replace: true });
         }
 
-    }, [user, host, isUserLoading, isHostLoading, navigate]);
+    }, [user, host, isUserLoading, isHostLoading, navigate, location]);
 
-    // Show nothing while loading or if redirecting
+    // Show loading spinner while loading or if redirecting
     if (isUserLoading || isHostLoading || (!user) || (user && !(host && (host.id || host._id)))) {
-        return null; // Or a loading spinner
+        return <LoadingSpinner />;
     }
 
     return children;

@@ -784,7 +784,7 @@ const Sidebar = memo(({ event }) => {
                         <p className="font-bold text-gray-900 text-lg">{event?.host?.full_name || "Host"}</p>
                         <p className="text-sm text-gray-500">Event Organizer</p>
                         {event?.host?.phone && <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">📱 {event.host.phone}</p>}
-                        {event?.host?.email && <p className="text-sm text-gray-600 truncate">✉️ {event.host.email}</p>}
+                        {event?.host?.email && <p className="text-sm text-gray-600 truncate whitespace-nowrap">✉️ {event.host.email}</p>}
                     </div>
                 </div>
                 <div className="flex items-center gap-1 mb-6">

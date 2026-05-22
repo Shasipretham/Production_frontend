@@ -23,7 +23,7 @@ const HostPhoto = ({ host }) => {
     );
 };
 
-export const CommunityGroupCard = ({ group, onJoin, isJoining }) => {
+export const CommunityGroupCard = ({ group, onJoin, isJoining, onViewDetails }) => {
     const groupId = group.id || group._id;
     const groupName = group.name || group.title || "";
     const groupImage = group.avatar_image || group.cover_image || group.image || "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=400&h=200&fit=crop";
@@ -102,10 +102,13 @@ export const CommunityGroupCard = ({ group, onJoin, isJoining }) => {
                     </div>
                     <button
                         className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-bold shadow-sm hover:shadow-md transition-all w-full sm:w-auto bg-accent text-white hover:bg-[#B0241F] border border-transparent"
-                        onClick={(e) => {
-                            // Let the parent Link handle navigation
-                        }}
+                          onClick={(e) => {
+    e.stopPropagation();
+    onViewDetails(group.id || group._id);
+                    }   }
+
                     >
+
                         View Details
                     </button>
                 </div>

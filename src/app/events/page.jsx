@@ -47,6 +47,18 @@ const EventsPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+  if (showFilters) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showFilters]);
+
   const [searchResultEvents, setSearchResultEvents] = useState([]); // Or just useMemo
 
   // Process events from API
@@ -59,8 +71,10 @@ const EventsPage = () => {
     });
 
     apiEvents.forEach(event => {
-      const categoryId = event.category?.toLowerCase() || 'other';
+const normalize = (str) =>
+  str?.toLowerCase().replace(/\s+/g, "").trim();
 
+const categoryId = normalize(event.type) || 'other';
       const uiEvent = {
         id: event._id || event.id,
         title: event.title || event.eventName || "Untitled Event",
@@ -107,36 +121,61 @@ const EventsPage = () => {
     [selectedFilters]
   )
 
+  const normalize = (str) =>
+  str?.toLowerCase().replace(/\s+/g, "").trim();
+
   // --- Search & Filter Logic ---
-  const filteredEventsDisplay = useMemo(() => {
-    if (!searchQuery && !hasActiveFilters && activeFilter === 'all') return null; // Null means show default categorized view
+const filteredEventsDisplay = useMemo(() => {
+  let filtered = [...allEventsList];
 
-    let filtered = allEventsList;
+  const normalize = (str) =>
+    str?.toLowerCase().replace(/\s+/g, "").trim();
 
-    // 1. Text Search
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(e =>
-        e.title?.toLowerCase().includes(query) ||
-        e.location?.toLowerCase().includes(query) ||
-        e.city?.toLowerCase().includes(query) ||
-        e.category?.toLowerCase().includes(query)
-      );
-    }
+  // ✅ 1. CATEGORY BUTTON FILTER
+  if (activeFilter !== "all" && activeFilter !== "trending") {
+    filtered = filtered.filter(
+      e => normalize(e.type) === normalize(activeFilter)
+    );
+  }
 
-    // 2. Category Pill Filter
-    if (activeFilter !== 'all') {
-      filtered = filtered.filter(e => e.category === activeFilter);
-    }
+  // ✅ 2. LOCATION FILTER
+  if (selectedFilters.location) {
+    const query = selectedFilters.location.toLowerCase();
 
-    // 3. Advanced Filters (from EventsFilters)
-    if (selectedFilters.location) {
-      filtered = filtered.filter(e => e.city?.toLowerCase().includes(selectedFilters.location.toLowerCase()) || e.country?.toLowerCase().includes(selectedFilters.location.toLowerCase()));
-    }
-    // Add more filters (date, price) here if needed based on API data format
+    filtered = filtered.filter(e => {
+      const city = e.city?.toLowerCase() || "";
+      const country = e.country?.toLowerCase() || "";
+      return city.includes(query) || country.includes(query);
+    });
+  }
 
-    return filtered;
-  }, [allEventsList, searchQuery, activeFilter, selectedFilters, hasActiveFilters]);
+  // ✅ 3. DROPDOWN CATEGORY FILTER
+  if (selectedFilters.category) {
+    filtered = filtered.filter(
+      e => normalize(e.type) === normalize(selectedFilters.category)
+    );
+  }
+
+  // ✅ 4. SEARCH FILTER
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+
+    filtered = filtered.filter(e =>
+      e.title?.toLowerCase().includes(query) ||
+      e.city?.toLowerCase().includes(query) ||
+      e.country?.toLowerCase().includes(query)
+    );
+  }
+
+  // ✅ 5. TRENDING SORT (LAST)
+  if (activeFilter === "trending") {
+    filtered = [...filtered].sort(
+      (a, b) => b.attendees_count - a.attendees_count
+    );
+  }
+
+  return filtered;
+}, [allEventsList, searchQuery, activeFilter, selectedFilters]);
 
   // ✅ Pagination for filtered events
   const {
@@ -190,8 +229,8 @@ const EventsPage = () => {
 
       {/* Trending Events Section */}
       {/* Trending Events Section - Only show if NO search/filter active */}
-      {!filteredEventsDisplay && (
-        <div id="trending" className="container mx-auto max-w-7xl px-4 py-8 sm:py-12">
+{filteredEventsDisplay.length === 0 && (
+          <div id="trending" className="container mx-auto max-w-7xl px-4 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#00142E] flex items-center gap-3">
               <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 text-[#00142E]" />
@@ -240,9 +279,8 @@ const EventsPage = () => {
 
       {/* Event Sections or Search Results */}
       <div className="container mx-auto max-w-7xl px-4 pb-8 sm:pb-12">
-        {filteredEventsDisplay ? (
-          <div className="space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
-            <h2 className="text-2xl font-bold text-[#00142E]">
+{filteredEventsDisplay.length > 0 ? (          <div className="space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-4">
+            <h2 className="text-2xl font-bold text-[#00142E] mt-4">
               {filteredEventsDisplay.length > 0 ? `Found ${filteredEventsDisplay.length} events` : "No events found"}
             </h2>
             <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>

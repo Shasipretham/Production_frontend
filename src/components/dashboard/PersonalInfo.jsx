@@ -28,13 +28,14 @@ const DetailCard = ({ title, description, children, onEdit, isEditing, icon: Ico
                         <p className="text-sm text-primary/50">{description}</p>
                     </div>
                 </div>
+
                 <button
                     onClick={onEdit}
                     disabled={isUpdating}
                     className={cn(
-                        "px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2",
+                        "px-3 py-2 md:px-4 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1 md:gap-2 whitespace-nowrap shrink-0 max-w-[140px]",
                         isEditing
-                            ? "bg-accent text-white hover:bg-accent/90 shadow-md"
+                            ? "bg-accent text-white hover:bg-accent/90 shadow-sm"
                             : "bg-neutral/20 text-primary hover:bg-neutral/30 border border-neutral/30"
                     )}
                 >
@@ -46,7 +47,8 @@ const DetailCard = ({ title, description, children, onEdit, isEditing, icon: Ico
                     ) : isEditing ? (
                         <>
                             <Check className="w-4 h-4" />
-                            Save Changes
+                            <span className="hidden sm:inline">Save Changes</span>
+                            <span className="sm:hidden">Save</span>
                         </>
                     ) : (
                         <>
@@ -56,7 +58,9 @@ const DetailCard = ({ title, description, children, onEdit, isEditing, icon: Ico
                     )}
                 </button>
             </div>
-            <div className="grid md:grid-cols-2 gap-5">
+
+            {/* ✅ FIX APPLIED HERE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                 {children}
             </div>
         </div>
@@ -94,7 +98,7 @@ const InfoField = ({
                     onChange={onChange}
                     placeholder={placeholder || label}
                     rows={4}
-                    className="w-full bg-white border-2 border-neutral/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all font-medium text-primary placeholder:text-primary/30 min-h-[120px]"
+    className="w-full h-[48px] bg-white border-2 border-neutral/30 py-3 px-4 rounded-xl"
                 />
             ) : (
                 <div className="flex gap-2">
@@ -103,20 +107,42 @@ const InfoField = ({
                             <CountryCodeSelect value={prefix} isoCode={iso} onChange={onPrefixChange} />
                         </div>
                     )}
-                    <input
-                        type={type}
-                        name={name}
-                        value={value}
-                        onChange={onChange}
-                        placeholder={placeholder || label}
-                        className="w-full bg-white border-2 border-neutral/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all font-medium text-primary placeholder:text-primary/30"
-                    />
+                 <input
+    type={type}
+    name={name}
+    value={value}
+    onChange={(e) => {
+        let val = e.target.value;
+
+        // ONLY numbers
+        if (name === "phone" || name === "whatsapp" || name === "zip") {
+            val = val.replace(/[^0-9]/g, "");
+
+            if (name === "phone" || name === "whatsapp") {
+                val = val.slice(0, 10);
+            }
+
+            if (name === "zip") {
+                val = val.slice(0, 6);
+            }
+        }
+
+        onChange({
+            target: {
+                name,
+                value: val
+            }
+        });
+    }}
+    inputMode="numeric"
+    placeholder={placeholder || label}
+    className="w-full h-[48px] bg-white border-2 border-neutral/30 py-3 px-4 rounded-xl"
+/>
                 </div>
             )
         ) : (
             <div className="relative group">
-                <div className="p-4 bg-neutral/10 rounded-xl border border-neutral/20 font-semibold text-primary truncate flex items-center justify-between hover:bg-neutral/15 transition-colors">
-                    <span className="truncate">
+<div className="px-4 py-3 bg-neutral/10 rounded-xl border border-neutral/20 font-semibold text-primary flex items-center">                    <span className="truncate">
                         {prefix && value ? `${prefix} ${value}` : (value || <span className="text-primary/30 font-normal italic">Not specified</span>)}
                     </span>
                     {action && value && (
@@ -322,7 +348,7 @@ export const PersonalInfo = ({ initialData, verificationState, onUpdate, isUpdat
                 <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-neutral/20 to-accent/5 rounded-full blur-3xl"></div>
             </div>
 
-            <div className="relative z-10 p-4 md:p-8 space-y-8 max-w-5xl">
+            <div className="relative z-10 p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
                 {/* Header Section */}
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-secondary to-navy-dark p-8 text-white">
                     <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 40%)' }}></div>

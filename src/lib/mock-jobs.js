@@ -748,13 +748,13 @@ export const FILTERS = {
         "Hybrid",
         "On-site"
     ],
-    experience: [
-        "Entry Level",
-        "1-2 years",
-        "2-4 years",
-        "3-5 years",
-        "5+ years"
-    ],
+   experience: [
+    "1+ years",
+    "2+ years",
+    "3+ years",
+    "4+ years",
+    "5+ years"
+  ],
     salary: [
         "$70k - $90k",
         "$90k - $110k",
@@ -764,8 +764,8 @@ export const FILTERS = {
         "$170k+"
     ],
     type: [
-        "Full-time",
-        "Part-time",
+        "Full Time",
+        "Part Time",
         "Contract",
         "Internship"
     ]

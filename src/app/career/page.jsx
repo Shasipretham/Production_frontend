@@ -44,27 +44,38 @@ export default function CareerPage() {
     // The API returns skills as an object, but the UI expects an array.
     // This hook transforms the raw API data into the shape the components need.
     // apiResponse is already the transformed jobs array from hostApi's transformResponse
-    const jobs = useMemo(() => {
-        const rawJobs = Array.isArray(apiResponse) ? apiResponse : [];
+   const jobs = useMemo(() => {
+  const rawJobs = Array.isArray(apiResponse) ? apiResponse : [];
 
-        if (!rawJobs.length) return [];
+  if (!rawJobs.length) return [];
 
-        return rawJobs.map((job) => {
-            // Flatten skills object into a single array if skills is an object
-            const skillsArray = Array.isArray(job.skills)
-                ? job.skills
-                : [
-                    ...(job.skills?.primary || []),
-                    ...(job.skills?.secondary || []),
-                    ...(job.skills?.nice_to_have || [])
-                ];
+  return rawJobs.map((job) => {
+    const skillsArray = Array.isArray(job.skills)
+      ? job.skills
+      : [
+          ...(job.skills?.primary || []),
+          ...(job.skills?.secondary || []),
+          ...(job.skills?.nice_to_have || [])
+        ];
 
-            return {
-                ...job,
-                skills: skillsArray
-            };
-        });
-    }, [apiResponse]);
+    return {
+      ...job,
+      skills: skillsArray,
+
+      // ✅ ADD THESE (CRITICAL FIX)
+      experience: job.experience_level,
+      type: job.employment_type,
+        workStyle:
+        job.work_style === "remote"
+          ? "Remote"
+          : job.work_style === "hybrid"
+          ? "Hybrid"
+          : "On-site",
+
+      salary: job.salary_range
+    };
+  });
+}, [apiResponse]);
 
     const handleViewDetails = (job) => {
         setSelectedJob(job)
@@ -209,8 +220,7 @@ export default function CareerPage() {
     }
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-gray-50 via-[#D1CBB7]/10 to-gray-50 font-sans">
-            <Navbar />
+<main className="min-h-screen bg-gradient-to-br from-gray-50 via-[#D1CBB7]/10 to-gray-50 font-sans pb-32 lg:pb-0 overflow-x-hidden">            <Navbar />
 
             {/* Hero Section */}
             <div className="bg-gradient-to-br from-[#00142E] via-[#0A1C30] to-[#02152B] pt-24 sm:pt-28 pb-12 sm:pb-16 md:pb-20 px-4 relative overflow-hidden">
@@ -292,31 +302,41 @@ export default function CareerPage() {
                 </div>
             </div>
 
-            {/* Job Category Tabs */}
-            <div className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-100">
-                <div className="container mx-auto max-w-6xl px-4">
-                    <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                                        ? "bg-[#00142E] text-white shadow-lg"
-                                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                                        }`}
-                                >
-                                    <tab.icon className="h-4 w-4" />
-                                    {tab.label}
-                                </button>
-                            ))}
-                        </div>
-                        <div className="hidden md:flex items-center gap-2 text-sm text-gray-500">
-                            <span>Showing {filteredJobs.length} of {jobs.length} jobs</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{/* Job Category Tabs */}
+<div className="sticky top-[72px] z-30 w-full bg-white border-b border-gray-100 shadow-sm">
+  <div className="max-w-6xl mx-auto px-4">
+    <div className="flex items-center justify-between py-3">
+
+      {/* SCROLLABLE TABS */}
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide flex-1">
+        <div className="flex gap-2 min-w-max">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
+                activeTab === tab.id
+                  ? "bg-[#00142E] text-white shadow"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              <tab.icon className="h-4 w-4 shrink-0" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* DESKTOP COUNT */}
+      <div className="hidden md:flex items-center gap-2 text-sm text-gray-500 ml-4 whitespace-nowrap">
+        <span>
+          Showing {filteredJobs.length} of {jobs.length} jobs
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
             {/* Benefits Section */}
             <section className="py-10 sm:py-12 md:py-16 px-4 bg-gradient-to-br from-gray-50 to-white">

@@ -18,7 +18,7 @@ export default function TripCard({ plan, isSelected, onSelect, onMatchRequest })
 
     return (
         <motion.div
-            layout
+          layout="size"
             className={`relative rounded-xl overflow-hidden transition-all duration-300 border-2 ${isSelected ? "shadow-2xl" : "hover:shadow-xl"
                 }`}
             style={{

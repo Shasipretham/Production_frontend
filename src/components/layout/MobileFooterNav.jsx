@@ -12,7 +12,7 @@ export function MobileFooterNav() {
         { name: "Home", path: "/", icon: Home },
         { name: "Stays", path: "/search", icon: Search },
         { name: "Groups", path: "/groups", icon: Users },
-        { name: "Travel", path: "/resources/travel", icon: Plane },
+        { name: "Travel", path: "/travel", icon: Plane },
         { name: "Shop", path: "/marketplace", icon: ShoppingBag },
     ];
 

@@ -274,7 +274,7 @@ export default function RoomPage() {
             <Navbar />
 
             {/* Gallery Section - Full Width on Mobile, Grid on Desktop */}
-            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 lg:pt-24 mt-2 lg:mt-6">
                 <div className="relative rounded-xl md:rounded-3xl overflow-hidden aspect-[4/3] md:aspect-[3/1] shadow-sm group">
                     {listing.photos.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-2 h-full">
@@ -301,7 +301,7 @@ export default function RoomPage() {
                                         {i === 4 && (
                                             <Button
                                                 variant="secondary"
-                                                className="absolute bottom-4 right-4 z-20 font-medium shadow-md hover:bg-white"
+                                                className="absolute bottom-4 right-4 z-20 font-medium shadow-md bg-white hover:bg-white cursor-pointer"
                                                 onClick={(e) => { e.stopPropagation(); setIsFullscreen(true); }}
                                             >
                                                 <Maximize2 className="w-4 h-4 mr-2" />
@@ -413,7 +413,7 @@ export default function RoomPage() {
                                 <h3 className="font-bold text-lg text-slate-900">Hosted by {listing.host.name}</h3>
                                 <p className="text-slate-500 text-sm">Superhost · Very responsive</p>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                                 {listing.host.socials.whatsapp && (
                                     <button onClick={() => handleSocialClick('whatsapp', listing.host.socials.whatsapp)} className="w-10 h-10 flex items-center justify-center rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors">
                                         <FaWhatsapp className="w-5 h-5" />
@@ -421,7 +421,7 @@ export default function RoomPage() {
                                 )}
                                 {listing.host.socials.email && (
                                     <button onClick={() => { window.open(`mailto:${listing.host.socials.email}`, '_blank'); }} className="w-10 h-10 flex items-center justify-center rounded-full bg-red-50 text-[#EA4335] hover:bg-red-100 transition-colors" title="Gmail">
-                                        <SiGmail className="w-4.5 h-4.5" />
+                                        <SiGmail className="w-4 h-4" />
                                     </button>
                                 )}
                                 {listing.host.socials.instagram && (

@@ -19,7 +19,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.location || ""}
                         onChange={e => handleInputChange("location", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Enter street address"
                     />
                 </div>
@@ -29,7 +29,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.landmark || ""}
                         onChange={e => handleInputChange("landmark", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Nearby landmark"
                     />
                 </div>
@@ -39,7 +39,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.venue_name || ""}
                         onChange={e => handleInputChange("venue_name", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Venue name"
                     />
                 </div>
@@ -49,7 +49,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Textarea
                         value={formData.venue_description || ""}
                         onChange={e => handleInputChange("venue_description", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Describe the venue"
                         rows={3}
                     />
@@ -60,7 +60,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Textarea
                         value={formData.what_is_included || ""}
                         onChange={e => handleInputChange("what_is_included", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="List what's included in the event"
                         rows={3}
                     />
@@ -71,7 +71,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Textarea
                         value={formData.what_is_not_included || ""}
                         onChange={e => handleInputChange("what_is_not_included", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="List what's not included in the event"
                         rows={3}
                     />
@@ -82,7 +82,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.parking_info || ""}
                         onChange={e => handleInputChange("parking_info", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Parking details"
                     />
                 </div>
@@ -92,7 +92,7 @@ export const LocationSection = ({ formData, handleInputChange }) => {
                     <Input
                         value={formData.accessibility_info || ""}
                         onChange={e => handleInputChange("accessibility_info", e.target.value)}
-                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d]"
+                        className="mt-1 text-gray-900 placeholder-gray-400 border-[#00162d] border"
                         placeholder="Accessibility information"
                     />
                 </div>
